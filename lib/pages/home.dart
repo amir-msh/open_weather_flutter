@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:open_weather_flutter/components/weather_indicator_painter/weather_indicator_painter.dart';
 import 'package:open_weather_flutter/utils/constants.dart';
 
 class HomePage extends StatefulWidget {
@@ -49,10 +50,12 @@ class _HomePageState extends State<HomePage> {
             direction: Axis.vertical,
             clipBehavior: Clip.none,
             children: [
-              const Expanded(
+              Expanded(
                 child: Center(
-                  child: FlutterLogo(
-                    size: 130,
+                  child: WeatherIndicatorPainter(
+                    code: 2,
+                    animation: true,
+                    day: isDay,
                   ),
                 ),
               ),
