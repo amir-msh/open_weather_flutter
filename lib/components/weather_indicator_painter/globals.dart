@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 class Globals {
-  static const bool isAntiAlias = false;
+  static final bool isAntiAlias =
+      Platform.isWindows || Platform.isMacOS || Platform.isLinux;
   static const bool defaultAnimationEnabled = false;
 
   static Paint sunPaint = Paint()
