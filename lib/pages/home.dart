@@ -45,7 +45,6 @@ class _HomePageState extends State<HomePage> {
           width: double.infinity,
           height: double.infinity,
           alignment: Alignment.center,
-          // TODO: AnimatedSwitcher? :
           child: Flex(
             direction: Axis.vertical,
             clipBehavior: Clip.none,
@@ -53,6 +52,7 @@ class _HomePageState extends State<HomePage> {
               Expanded(
                 child: Center(
                   child: WeatherIndicatorPainter(
+                    scale: 1.1,
                     code: 2,
                     animation: true,
                     day: isDay,
@@ -63,50 +63,40 @@ class _HomePageState extends State<HomePage> {
                 duration: const Duration(milliseconds: 250),
                 height: 200,
                 alignment: Alignment.center,
-                child: ShaderMask(
-                  blendMode: BlendMode.dstIn,
-                  shaderCallback: (Rect bounds) {
-                    return LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      stops: const [0, 0.03, 0.5, 0.97, 1],
-                      colors: <Color>[
-                        Colors.black.withAlpha(0),
-                        Colors.black.withAlpha(255),
-                        Colors.black.withAlpha(255),
-                        Colors.black.withAlpha(255),
-                        Colors.black.withAlpha(0),
-                      ],
-                    ).createShader(bounds);
-                  },
-                  child: Flex(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Edit
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    direction: Axis.vertical,
-                    children: [
-                      Flexible(
-                        flex: 1,
-                        child: Container(
+                padding: const EdgeInsets.all(8),
+                child: Flex(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Edit
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  direction: Axis.vertical,
+                  children: [
+                    Flexible(
+                      flex: 1,
+                      child: Container(
+                        clipBehavior: Clip.antiAlias,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(10),
+                          ),
                           color: Colors.white24,
                         ),
                       ),
-                      Divider(
-                        thickness: 2.0,
-                        color: isDay
-                            ? Colors.white.withAlpha(75)
-                            : Colors.black.withAlpha(75),
-                        height: 1,
-                        indent: 0, // TODO: Test what is better.
-                        endIndent: 0,
+                    ),
+                    Divider(
+                      thickness: 2.0,
+                      color: isDay
+                          ? Colors.white.withAlpha(75)
+                          : Colors.black.withAlpha(75),
+                      height: 1,
+                      indent: 0,
+                      endIndent: 0,
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: Container(
+                        color: Colors.white24,
                       ),
-                      Flexible(
-                        flex: 1,
-                        child: Container(
-                          color: Colors.white24,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ],
