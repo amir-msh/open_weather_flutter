@@ -3,7 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:open_weather_flutter/http_helpers/weather/exceptions.dart';
 import 'weather.dart';
 
-//35.845528,50.964009
+// sample-location (Tehran): 35.845528,50.964009
+
 /*
 https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&
 exclude={part}&appid={YOUR API KEY}
