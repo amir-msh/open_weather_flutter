@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:open_weather_flutter/components/weather_indicator_painter/globals.dart';
 import 'weather_indicator_painters/clear_sky.dart';
 import 'weather_indicator_painters/few_clouds.dart';
 import 'weather_indicator_painters/scattered_clouds.dart';
@@ -22,14 +23,14 @@ class WeatherIndicatorPainter extends StatelessWidget {
     required this.code,
     this.isDay = true,
     this.scale = 1.0,
-    this.animation = false,
+    this.animation = Globals.animationEnabledDefault,
   });
 
   factory WeatherIndicatorPainter.fromIconCode({
     Key? key,
     required String iconCode,
     double scale = 1.0,
-    bool animation = false,
+    bool animation = Globals.animationEnabledDefault,
   }) {
     return WeatherIndicatorPainter(
       key: key,

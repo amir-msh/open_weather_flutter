@@ -47,7 +47,7 @@ class _ClearSkyState extends State<ClearSky>
           painter: _ClearSkyCustomPainter(
             animationValue: _animation.value,
             day: widget.day,
-          ), //_animation.value
+          ),
           willChange: true,
           isComplex: true,
         );
