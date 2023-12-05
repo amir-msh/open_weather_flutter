@@ -59,7 +59,7 @@ class _HomePageState extends State<HomePage> {
                       return WeatherIndicatorPainter.fromIconCode(
                         scale: 1.1,
                         // iconCode: data.weatherData.current.weather[0].icon,
-                        iconCode: '1n',
+                        iconCode: '1d',
                         animation: true,
                       );
                     } else if (data is WeatherStatusError) {

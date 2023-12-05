@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import '../globals.dart';
@@ -83,9 +84,45 @@ class _ClearSkyCustomPainter extends CustomPainter {
 
   void drawSun(Canvas canvas) {
     canvas.drawCircle(
-      const Offset(0, 0),
+      Offset.zero,
       50,
       Globals.sunPaint,
+    );
+
+    canvas.clipPath(
+      Path()
+        ..addOval(
+          Rect.fromCircle(center: Offset.zero, radius: 49.9),
+        ),
+    );
+
+    final double glowBlur = Tween<double>(
+      begin: 20,
+      end: 39,
+    ).transform(animationValue);
+
+    canvas.drawCircle(
+      Offset.fromDirection(
+        Tween<double>(
+          begin: 0,
+          end: pi * 2,
+        ).transform(animationValue),
+        Tween<double>(begin: 10, end: 45).transform(animationValue),
+      ),
+      Tween<double>(begin: 50, end: 80).transform(animationValue),
+      Paint()
+        ..color = Colors.amber.withOpacity(
+          Tween<double>(
+            begin: 0.75,
+            end: 0.5,
+          ).transform(animationValue),
+        )
+        ..filterQuality = FilterQuality.low
+        ..imageFilter = ImageFilter.blur(
+          sigmaX: glowBlur,
+          sigmaY: glowBlur,
+          tileMode: TileMode.repeated,
+        ),
     );
   }
 
