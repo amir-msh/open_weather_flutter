@@ -12,10 +12,10 @@ import 'package:permission_handler/permission_handler.dart';
 
 class WeatherCubit extends Cubit<WeatherStatus> {
   bool isCurrentLocation = true;
-  static const Duration locationTimeout = Duration(seconds: 10);
-  static final _weatherHelper = WeatherHttpHepler(owmApiToken);
+  static const locationTimeout = Duration(seconds: 10);
+  final WeatherHttpHepler _weatherHelper;
 
-  WeatherCubit() : super(WeatherStatusInitial());
+  WeatherCubit(this._weatherHelper) : super(WeatherStatusInitial());
 
   ({double lat, double lon}) getLatestLocation(final WeatherStatusOk data) {
     return (

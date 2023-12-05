@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'weather_indicator_painters/clear_sky.dart';
 import 'weather_indicator_painters/few_clouds.dart';
@@ -13,38 +15,53 @@ class WeatherIndicatorPainter extends StatelessWidget {
   final double scale;
   final bool animation;
   final int code;
-  final bool day;
+  final bool isDay;
 
   const WeatherIndicatorPainter({
     super.key,
     required this.code,
-    this.day = true,
+    this.isDay = true,
     this.scale = 1.0,
     this.animation = false,
   });
 
+  factory WeatherIndicatorPainter.fromIconCode({
+    Key? key,
+    required String iconCode,
+    double scale = 1.0,
+    bool animation = false,
+  }) {
+    return WeatherIndicatorPainter(
+      key: key,
+      code: int.tryParse(iconCode.substring(0, iconCode.length - 1)) ?? 2,
+      isDay: iconCode[max(0, iconCode.length - 1)] == 'd',
+      scale: scale,
+      animation: animation,
+    );
+  }
+
   Widget painterSwitcher() {
     switch (code) {
       case 1:
-        return ClearSky(day, animation); // ClearSky
+        return ClearSky(isDay, animation); // ClearSky
       case 2:
-        return FewClouds(day, animation); // FewClouds
+        return FewClouds(isDay, animation); // FewClouds
       case 3:
-        return ScatteredClouds(day, animation); // ScatteredClouds
+        return ScatteredClouds(isDay, animation); // ScatteredClouds
       case 4:
-        return BrokenClouds(day, animation); // BrokenClouds (3 Clouds)
+        return BrokenClouds(isDay, animation); // BrokenClouds (3 Clouds)
       case 9:
-        return ShowerRain(day, animation); // ShowerRain
+        return ShowerRain(isDay, animation); // ShowerRain
       case 10:
-        return Rain(day, animation); // Rain
+        return Rain(isDay, animation); // Rain
       case 11:
-        return Thunderstorm(day, animation); // Thunderstorm
+        return Thunderstorm(isDay, animation); // Thunderstorm
       case 13:
-        return Snow(day, animation); // Snow
+        return Snow(isDay, animation); // Snow
       case 50:
-        return Mist(day, animation); // Mist
+        return Mist(isDay, animation); // Mist
       default:
-        return FewClouds(day, animation);
+        return FewClouds(isDay, animation);
     }
   }
 

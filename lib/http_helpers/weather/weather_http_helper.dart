@@ -12,7 +12,7 @@ exclude={part}&appid={YOUR API KEY}
 
 class WeatherHttpHepler {
   final String apiToken;
-  WeatherHttpHepler(this.apiToken);
+  const WeatherHttpHepler(this.apiToken);
 
   static const baseUri = 'https://api.openweathermap.org/data/2.5/onecall';
 

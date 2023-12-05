@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_weather_flutter/components/weather_indicator_painter/weather_indicator_painter.dart';
+import 'package:open_weather_flutter/http_helpers/weather/weather.dart';
 import 'package:open_weather_flutter/utils/constants.dart';
+import 'package:open_weather_flutter/weather/weather_bloc.dart';
+import 'package:open_weather_flutter/weather/weather_state.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,6 +19,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    BlocProvider.of<WeatherCubit>(context).getCurrentLocationWeather();
+
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
@@ -51,11 +57,20 @@ class _HomePageState extends State<HomePage> {
             children: [
               Expanded(
                 child: Center(
-                  child: WeatherIndicatorPainter(
-                    scale: 1.1,
-                    code: 2,
-                    animation: true,
-                    day: isDay,
+                  child: BlocBuilder<WeatherCubit, WeatherStatus>(
+                    builder: (context, data) {
+                      if (data is WeatherStatusOk) {
+                        return WeatherIndicatorPainter.fromIconCode(
+                          scale: 1.1,
+                          iconCode: data.weatherData.current.weather[0].icon,
+                          animation: true,
+                        );
+                      } else if (data is WeatherStatusError) {
+                        return Icon(Icons.error);
+                      } else {
+                        return const CircularProgressIndicator.adaptive();
+                      }
+                    },
                   ),
                 ),
               ),
