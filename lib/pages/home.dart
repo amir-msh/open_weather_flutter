@@ -89,12 +89,11 @@ class _HomePageState extends State<HomePage> {
                 alignment: Alignment.center,
                 padding: const EdgeInsets.all(8),
                 child: Flex(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Edit
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   direction: Axis.vertical,
                   children: [
-                    Flexible(
-                      flex: 1,
+                    Expanded(
                       child: Container(
                         clipBehavior: Clip.antiAlias,
                         decoration: const BoxDecoration(
@@ -108,6 +107,7 @@ class _HomePageState extends State<HomePage> {
                             if (data is WeatherStatusOk) {
                               return DailyWeatherListViewer(
                                 data.weatherData.daily,
+                                isDay: data.weatherData.current.isDay,
                               );
                             }
                             return const Center(
@@ -134,8 +134,7 @@ class _HomePageState extends State<HomePage> {
                         );
                       },
                     ),
-                    Flexible(
-                      flex: 1,
+                    Expanded(
                       child: Container(
                         color: Colors.white24,
                         child: BlocBuilder<WeatherCubit, WeatherStatus>(
@@ -143,6 +142,7 @@ class _HomePageState extends State<HomePage> {
                             if (data is WeatherStatusOk) {
                               return HourlyWeatherListViewer(
                                 data.weatherData.hourly,
+                                isDay: data.weatherData.current.isDay,
                               );
                             }
                             return const Center(

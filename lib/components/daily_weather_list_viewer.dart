@@ -5,11 +5,13 @@ import 'package:open_weather_flutter/utils/weather_converters.dart';
 
 class DailyWeatherListViewer extends StatelessWidget {
   final List<Daily> data;
+  final bool isDay;
   final Axis scrollDirection;
   const DailyWeatherListViewer(
     this.data, {
     super.key,
     this.scrollDirection = Axis.horizontal,
+    required this.isDay,
   });
 
   @override
@@ -18,15 +20,16 @@ class DailyWeatherListViewer extends StatelessWidget {
       scrollDirection: scrollDirection,
       padding: const EdgeInsets.symmetric(horizontal: 1),
       itemCount: data.length,
-      separatorBuilder: (context, index) => const VerticalDivider(
-        indent: 10,
-        endIndent: 10,
-        width: 5,
-        thickness: 0.75,
-        color: Colors.white30,
-      ),
+      separatorBuilder: (context, index) {
+        return const VerticalDivider(
+          indent: 10,
+          endIndent: 10,
+          width: 5,
+          thickness: 0.75,
+          color: Colors.white30,
+        );
+      },
       itemBuilder: (context, index) {
-        final isDay = data[index].weather.first.isDay;
         return Container(
           padding: const EdgeInsets.all(5),
           child: Column(
