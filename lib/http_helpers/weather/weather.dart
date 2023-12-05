@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Weather {
   final num lat;
   final num lon;
@@ -48,6 +50,8 @@ class WeatherData {
     required this.description,
     required this.icon,
   });
+
+  bool get isDay => icon.characters.last == 'd';
 
   factory WeatherData.fromJson(Map<String, dynamic> json) {
     return WeatherData(
@@ -112,7 +116,7 @@ class DailyFeelsLikeData {
 }
 
 class Current {
-  final num dt;
+  final int dt;
   final num temp;
   final num feelsLike;
   final num pressure;
@@ -166,7 +170,7 @@ class Current {
 }
 
 class Minutely {
-  final num dt;
+  final int dt;
   final num precipitation;
 
   Minutely({
@@ -183,7 +187,7 @@ class Minutely {
 }
 
 class Hourly {
-  final num dt;
+  final int dt;
   final num temp;
   final num feelsLike;
   final num pressure;
@@ -230,7 +234,7 @@ class Hourly {
 }
 
 class Daily {
-  final num dt;
+  final int dt;
   final DailyTempData temp;
   final DailyFeelsLikeData feelsLike;
   final num pressure;

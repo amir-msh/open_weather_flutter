@@ -1,0 +1,63 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:open_weather_flutter/components/weather_indicator_painter/weather_indicator_painter.dart';
+import 'package:open_weather_flutter/http_helpers/weather/weather.dart';
+import 'package:open_weather_flutter/utils/weather_converters.dart';
+
+class HourlyWeatherListViewer extends StatelessWidget {
+  final List<Hourly> data;
+  final Axis scrollDirection;
+  const HourlyWeatherListViewer(
+    this.data, {
+    super.key,
+    this.scrollDirection = Axis.horizontal,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      scrollDirection: scrollDirection,
+      padding: const EdgeInsets.symmetric(horizontal: 3),
+      itemCount: data.length,
+      separatorBuilder: (context, index) => const VerticalDivider(
+        indent: 10,
+        endIndent: 10,
+        width: 1,
+        thickness: 0.75,
+        color: Colors.white24,
+      ),
+      itemBuilder: (context, index) {
+        final isDay = data[index].weather.first.isDay;
+        return Container(
+          padding: const EdgeInsets.all(6),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: WeatherIndicatorPainter.fromIconCode(
+                  scale: 0.21,
+                  iconCode: data[index].weather.first.icon,
+                ),
+              ),
+              Text(
+                DateFormat('HH').format(dtToDateTime(data[index].dt)),
+                style: TextStyle(
+                  color: isDay ? Colors.black : Colors.white70,
+                ),
+              ),
+              Text(
+                '${kelvinToCelsiusString(
+                  data[index].temp,
+                )}°C',
+                style: TextStyle(
+                  color: isDay ? Colors.black : Colors.white70,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
