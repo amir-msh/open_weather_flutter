@@ -17,8 +17,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool isDay = false;
-
   @override
   void initState() {
     BlocProvider.of<WeatherCubit>(context).getCurrentLocationWeather();
@@ -33,112 +31,133 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: AnimatedContainer(
-        duration: const Duration(milliseconds: 1000),
-        curve: Curves.easeInOut,
-        decoration: BoxDecoration(
-          shape: BoxShape.rectangle,
-          gradient: LinearGradient(
-            colors: isDay ? kDayGradient : kNightGradient,
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-          ),
-        ),
-        width: double.infinity,
-        height: double.infinity,
+      body: Stack(
+        fit: StackFit.expand,
         alignment: Alignment.center,
-        child: Flex(
-          direction: Axis.vertical,
-          clipBehavior: Clip.none,
-          children: [
-            Expanded(
-              child: Center(
-                child: BlocBuilder<WeatherCubit, WeatherStatus>(
-                  builder: (context, data) {
-                    if (data is WeatherStatusOk) {
-                      return WeatherIndicatorPainter.fromIconCode(
-                        scale: 1.1,
-                        // iconCode: data.weatherData.current.weather[0].icon,
-                        iconCode: '1d',
-                        animation: true,
-                      );
-                    } else if (data is WeatherStatusError) {
-                      return const Icon(Icons.error);
-                    } else {
-                      return const Center(
-                        child: CircularProgressIndicator.adaptive(),
-                      );
-                    }
-                  },
+        clipBehavior: Clip.none,
+        children: [
+          BlocBuilder<WeatherCubit, WeatherStatus>(
+            builder: (context, data) {
+              final isDay = data is WeatherStatusOk
+                  ? data.weatherData.current.isDay
+                  : DateTime.now().hour > 6 && DateTime.now().hour < 18;
+              return Positioned.fill(
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 1000),
+                  curve: Curves.easeInOut,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    gradient: LinearGradient(
+                      colors: isDay ? kDayGradient : kNightGradient,
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          Flex(
+            direction: Axis.vertical,
+            clipBehavior: Clip.none,
+            children: [
+              Expanded(
+                child: Center(
+                  child: BlocBuilder<WeatherCubit, WeatherStatus>(
+                    builder: (context, data) {
+                      if (data is WeatherStatusOk) {
+                        return WeatherIndicatorPainter.fromIconCode(
+                          scale: 1.1,
+                          // iconCode: data.weatherData.current.weather[0].icon,
+                          iconCode: '1d',
+                          animation: true,
+                        );
+                      } else if (data is WeatherStatusError) {
+                        return const Icon(Icons.error);
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator.adaptive(),
+                        );
+                      }
+                    },
+                  ),
                 ),
               ),
-            ),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              height: 200,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.all(8),
-              child: Flex(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Edit
-                crossAxisAlignment: CrossAxisAlignment.center,
-                direction: Axis.vertical,
-                children: [
-                  Flexible(
-                    flex: 1,
-                    child: Container(
-                      clipBehavior: Clip.antiAlias,
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(10),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                height: 200,
+                alignment: Alignment.center,
+                padding: const EdgeInsets.all(8),
+                child: Flex(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Edit
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  direction: Axis.vertical,
+                  children: [
+                    Flexible(
+                      flex: 1,
+                      child: Container(
+                        clipBehavior: Clip.antiAlias,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(10),
+                          ),
+                          color: Colors.white24,
                         ),
+                        child: BlocBuilder<WeatherCubit, WeatherStatus>(
+                          builder: (context, data) {
+                            if (data is WeatherStatusOk) {
+                              return DailyWeatherListViewer(
+                                data.weatherData.daily,
+                              );
+                            }
+                            return const Center(
+                              child: CircularProgressIndicator.adaptive(),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    BlocBuilder<WeatherCubit, WeatherStatus>(
+                      builder: (context, data) {
+                        final isDay = data is WeatherStatusOk
+                            ? data.weatherData.current.isDay
+                            : DateTime.now().hour > 6 &&
+                                DateTime.now().hour < 18;
+                        return Divider(
+                          thickness: 2.0,
+                          color: isDay
+                              ? Colors.white.withAlpha(75)
+                              : Colors.black.withAlpha(75),
+                          height: 1,
+                          indent: 0,
+                          endIndent: 0,
+                        );
+                      },
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: Container(
                         color: Colors.white24,
-                      ),
-                      child: BlocBuilder<WeatherCubit, WeatherStatus>(
-                        builder: (context, data) {
-                          if (data is WeatherStatusOk) {
-                            return DailyWeatherListViewer(
-                              data.weatherData.daily,
+                        child: BlocBuilder<WeatherCubit, WeatherStatus>(
+                          builder: (context, data) {
+                            if (data is WeatherStatusOk) {
+                              return HourlyWeatherListViewer(
+                                data.weatherData.hourly,
+                              );
+                            }
+                            return const Center(
+                              child: CircularProgressIndicator.adaptive(),
                             );
-                          }
-                          return const Center(
-                            child: CircularProgressIndicator.adaptive(),
-                          );
-                        },
+                          },
+                        ),
                       ),
                     ),
-                  ),
-                  Divider(
-                    thickness: 2.0,
-                    color: isDay
-                        ? Colors.white.withAlpha(75)
-                        : Colors.black.withAlpha(75),
-                    height: 1,
-                    indent: 0,
-                    endIndent: 0,
-                  ),
-                  Flexible(
-                    flex: 1,
-                    child: Container(
-                      color: Colors.white24,
-                      child: BlocBuilder<WeatherCubit, WeatherStatus>(
-                        builder: (context, data) {
-                          if (data is WeatherStatusOk) {
-                            return HourlyWeatherListViewer(
-                              data.weatherData.hourly,
-                            );
-                          }
-                          return const Center(
-                            child: CircularProgressIndicator.adaptive(),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     );
   }
