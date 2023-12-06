@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_weather_flutter/components/custom_scroll_behavior.dart';
-import 'package:open_weather_flutter/http_helpers/weather/weather_http_helper.dart';
 import 'package:open_weather_flutter/http_helpers/weather/weather_http_helper_mock.dart';
 import 'package:open_weather_flutter/pages/home.dart';
 import 'package:open_weather_flutter/utils/credentials.dart';
