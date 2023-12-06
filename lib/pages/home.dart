@@ -1,10 +1,10 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_weather_flutter/components/hourly_weather_list_viewer.dart';
 import 'package:open_weather_flutter/components/weather_indicator_painter/weather_indicator_painter.dart';
 import 'package:open_weather_flutter/components/daily_weather_list_viewer.dart';
-import 'package:open_weather_flutter/http_helpers/weather/weather.dart';
 import 'package:open_weather_flutter/utils/constants.dart';
 import 'package:open_weather_flutter/weather/weather_bloc.dart';
 import 'package:open_weather_flutter/weather/weather_state.dart';
@@ -17,6 +17,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
+
   @override
   void initState() {
     BlocProvider.of<WeatherCubit>(context).getCurrentLocationWeather();
@@ -46,7 +49,6 @@ class _HomePageState extends State<HomePage> {
                   duration: const Duration(milliseconds: 1000),
                   curve: Curves.easeInOut,
                   decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
                     gradient: LinearGradient(
                       colors: isDay ? kDayGradient : kNightGradient,
                       begin: Alignment.bottomCenter,
@@ -59,6 +61,8 @@ class _HomePageState extends State<HomePage> {
           ),
           Flex(
             direction: Axis.vertical,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.end,
             clipBehavior: Clip.none,
             children: [
               Expanded(
@@ -156,6 +160,15 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ],
+          ),
+          RefreshIndicator(
+            key: _refreshIndicatorKey,
+            edgeOffset: 0,
+            onRefresh: () async {
+              log('onRefresh()');
+              await BlocProvider.of<WeatherCubit>(context).refreshWeatherData();
+            },
+            child: ListView(),
           ),
         ],
       ),
