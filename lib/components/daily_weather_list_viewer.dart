@@ -7,16 +7,19 @@ class DailyWeatherListViewer extends StatelessWidget {
   final List<Daily> data;
   final bool isDay;
   final Axis scrollDirection;
+  final ScrollController? scrollController;
   const DailyWeatherListViewer(
     this.data, {
     super.key,
     this.scrollDirection = Axis.horizontal,
+    this.scrollController,
     required this.isDay,
   });
 
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
+      controller: scrollController,
       scrollDirection: scrollDirection,
       padding: const EdgeInsets.symmetric(horizontal: 1),
       itemCount: data.length,
