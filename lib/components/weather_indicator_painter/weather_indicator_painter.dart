@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:open_weather_flutter/components/weather_indicator_painter/globals.dart';
 import 'weather_indicator_painters/clear_sky.dart';
@@ -12,15 +10,39 @@ import 'weather_indicator_painters/snow.dart';
 import 'weather_indicator_painters/mist.dart';
 import 'weather_indicator_painters/thunderstorm.dart';
 
+enum WeatherCode {
+  clearSky,
+  fewClouds,
+  scatteredClouds,
+  brokenClouds,
+  showerRain,
+  rain,
+  thunderstorm,
+  snow,
+  mist,
+}
+
+const mapWeatherCodeToEnum = <int, WeatherCode>{
+  1: WeatherCode.clearSky,
+  2: WeatherCode.fewClouds,
+  3: WeatherCode.scatteredClouds,
+  4: WeatherCode.brokenClouds,
+  9: WeatherCode.showerRain,
+  10: WeatherCode.rain,
+  11: WeatherCode.thunderstorm,
+  13: WeatherCode.snow,
+  50: WeatherCode.mist,
+};
+
 class WeatherIndicatorPainter extends StatelessWidget {
   final double scale;
   final bool animation;
-  final int code;
+  final WeatherCode? code;
   final bool isDay;
 
   const WeatherIndicatorPainter({
     super.key,
-    required this.code,
+    this.code,
     this.isDay = true,
     this.scale = 1.0,
     this.animation = Globals.animationEnabledDefault,
@@ -32,10 +54,16 @@ class WeatherIndicatorPainter extends StatelessWidget {
     double scale = 1.0,
     bool animation = Globals.animationEnabledDefault,
   }) {
+    final weatherCode = int.tryParse(
+      iconCode.substring(0, iconCode.length - 1),
+    );
+
+    final code = weatherCode == null ? null : mapWeatherCodeToEnum[weatherCode];
+
     return WeatherIndicatorPainter(
       key: key,
-      code: int.tryParse(iconCode.substring(0, iconCode.length - 1)) ?? 2,
-      isDay: iconCode[max(0, iconCode.length - 1)] == 'd',
+      code: code,
+      isDay: iconCode.characters.last != 'n',
       scale: scale,
       animation: animation,
     );
@@ -43,24 +71,24 @@ class WeatherIndicatorPainter extends StatelessWidget {
 
   Widget painterSwitcher() {
     switch (code) {
-      case 1:
-        return ClearSky(isDay, animation); // ClearSky
-      case 2:
-        return FewClouds(isDay, animation); // FewClouds
-      case 3:
-        return ScatteredClouds(isDay, animation); // ScatteredClouds
-      case 4:
-        return BrokenClouds(isDay, animation); // BrokenClouds (3 Clouds)
-      case 9:
-        return ShowerRain(isDay, animation); // ShowerRain
-      case 10:
-        return Rain(isDay, animation); // Rain
-      case 11:
-        return Thunderstorm(isDay, animation); // Thunderstorm
-      case 13:
-        return Snow(isDay, animation); // Snow
-      case 50:
-        return Mist(isDay, animation); // Mist
+      case WeatherCode.clearSky:
+        return ClearSky(isDay, animation);
+      case WeatherCode.fewClouds:
+        return FewClouds(isDay, animation);
+      case WeatherCode.scatteredClouds:
+        return ScatteredClouds(isDay, animation);
+      case WeatherCode.brokenClouds:
+        return BrokenClouds(isDay, animation);
+      case WeatherCode.showerRain:
+        return ShowerRain(isDay, animation);
+      case WeatherCode.rain:
+        return Rain(isDay, animation);
+      case WeatherCode.thunderstorm:
+        return Thunderstorm(isDay, animation);
+      case WeatherCode.snow:
+        return Snow(isDay, animation);
+      case WeatherCode.mist:
+        return Mist(isDay, animation);
       default:
         return FewClouds(isDay, animation);
     }
