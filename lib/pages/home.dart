@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_weather_flutter/components/hourly_weather_list_viewer.dart';
+import 'package:open_weather_flutter/components/non_scrollable_child_refresh_indicator.dart';
 import 'package:open_weather_flutter/components/weather_indicator_painter/weather_indicator_painter.dart';
 import 'package:open_weather_flutter/components/daily_weather_list_viewer.dart';
 import 'package:open_weather_flutter/utils/constants.dart';
@@ -66,12 +67,19 @@ class _HomePageState extends State<HomePage> {
             clipBehavior: Clip.none,
             children: [
               Expanded(
-                child: Center(
+                child: NonScrollableChildRefreshIndicator(
+                  refreshIndicatorKey: _refreshIndicatorKey,
+                  onRefresh: () async {
+                    log('onRefresh()');
+                    await BlocProvider.of<WeatherCubit>(
+                      context,
+                    ).refreshWeatherData();
+                  },
                   child: BlocBuilder<WeatherCubit, WeatherStatus>(
                     builder: (context, data) {
                       if (data is WeatherStatusOk) {
                         return WeatherIndicatorPainter.fromIconCode(
-                          scale: 1.1,
+                          scale: 1.5,
                           // iconCode: data.weatherData.current.weather[0].icon,
                           iconCode: '1d',
                           animation: true,
@@ -160,15 +168,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ],
-          ),
-          RefreshIndicator(
-            key: _refreshIndicatorKey,
-            edgeOffset: 0,
-            onRefresh: () async {
-              log('onRefresh()');
-              await BlocProvider.of<WeatherCubit>(context).refreshWeatherData();
-            },
-            child: ListView(),
           ),
         ],
       ),
