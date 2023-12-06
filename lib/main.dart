@@ -21,7 +21,7 @@ class WeatherApp extends StatelessWidget {
       ),
       lazy: false,
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Open Weather FLutter',
         scrollBehavior: CustomScrollBehavior(),
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
