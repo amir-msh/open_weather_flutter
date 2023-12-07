@@ -16,7 +16,7 @@ class WeatherCubit extends Cubit<WeatherStatus> {
 
   WeatherCubit(this._weatherHelper) : super(WeatherStatusInitial());
 
-  ({double lat, double lon}) getLatestLocation(final WeatherStatusOk data) {
+  ({double lat, double lon}) _getLatestLocation(final WeatherStatusOk data) {
     return (
       lat: data.weatherData.lat.toDouble(),
       lon: data.weatherData.lon.toDouble(),
@@ -26,7 +26,7 @@ class WeatherCubit extends Cubit<WeatherStatus> {
   Future refreshWeatherData() async {
     if (state is WeatherStatusOk) {
       final okState = state as WeatherStatusOk;
-      final latestLocation = getLatestLocation(okState);
+      final latestLocation = _getLatestLocation(okState);
 
       emit(WeatherStatusLoading());
 
@@ -50,23 +50,16 @@ class WeatherCubit extends Cubit<WeatherStatus> {
       }
     } else {
       await getCurrentLocationWeather();
-      return;
     }
   }
 
   Future getManualLocationWeather(double lat, double lon) async {
-    if (state is! WeatherStatusOk) return;
-
-    final okState = state as WeatherStatusOk;
-    final latestLocation = getLatestLocation(okState);
+    emit(WeatherStatusLoading());
 
     try {
       emit(
         WeatherStatusOk(
-          weatherData: await _weatherHelper.fetchWeather(
-            latestLocation.lat,
-            latestLocation.lon,
-          ),
+          weatherData: await _weatherHelper.fetchWeather(lat, lon),
           isCurrentLocation: false,
         ),
       );

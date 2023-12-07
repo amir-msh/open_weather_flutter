@@ -127,14 +127,15 @@ class _HomePageState extends State<HomePage> {
                       builder: (context, data) {
                         if (data is WeatherStatusOk) {
                           final weatherData = data.weatherData;
+                          log(weatherData.timeZone);
                           return TodayForecastViewer(
                             weatherIndicator: SizedBox(
                               height: 275,
-                              child: WeatherIndicatorPainter(
+                              child: WeatherIndicatorPainter.fromIconCode(
+                                iconCode:
+                                    data.weatherData.current.weather[0].icon,
+                                // code: WeatherCode.snow,
                                 scale: 1.3,
-                                // iconCode:
-                                //     data.weatherData.current.weather[0].icon,
-                                code: WeatherCode.snow,
                                 animation: true,
                               ),
                             ),
