@@ -178,13 +178,6 @@ class _LocationPickerState extends State<LocationPicker> {
     );
   }
 
-  Future<void> setManualLocation(double lat, double lon) async {
-    await BlocProvider.of<WeatherCubit>(context)
-        .getManualLocationWeather(lat, lon);
-
-    d.log('manual location selected: $lat, $lon');
-  }
-
   Future<void> placeListItemClicked(int index) async {
     searchTimer.cancel();
 
@@ -217,9 +210,13 @@ class _LocationPickerState extends State<LocationPicker> {
 
     final cords = details.success!.features.first.geometry.coordinates;
 
-    await setManualLocation(cords.lat, cords.long);
+    d.log('manual location selected: ${cords.lat}, ${cords.long}');
 
     if (context.mounted) {
+      BlocProvider.of<WeatherCubit>(context).getManualLocationWeather(
+        cords.lat,
+        cords.long,
+      );
       Navigator.of(context).pop();
     }
   }
