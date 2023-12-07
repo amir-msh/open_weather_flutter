@@ -8,7 +8,6 @@ class TodayForecastViewer extends StatelessWidget {
   final bool isCurrentLocation;
   final VoidCallback? onLocationButtonPressed;
   final Widget weatherIndicator;
-
   const TodayForecastViewer({
     required this.isDay,
     required this.description,

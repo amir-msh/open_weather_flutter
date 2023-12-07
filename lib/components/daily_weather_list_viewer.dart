@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:open_weather_flutter/components/weather_indicator_painter/weather_indicator_painter.dart';
@@ -35,49 +37,58 @@ class DailyWeatherListViewer extends StatelessWidget {
         );
       },
       itemBuilder: (context, index) {
-        return Container(
-          padding: const EdgeInsets.all(5),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: WeatherIndicatorPainter.fromIconCode(
-                  scale: 0.28,
-                  iconCode: data[index].weather.first.icon,
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(3, 0, 3, 5),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                  height: 50,
+                  child: WeatherIndicatorPainter.fromIconCode(
+                    scale: 0.28,
+                    iconCode: data[index].weather.first.icon,
+                  ),
                 ),
-              ),
-              Text(
-                DateFormat('EEE').format(
-                  DateTime.fromMillisecondsSinceEpoch(
+                const SizedBox(height: 3),
+                Text(
+                  DateFormat('EEE').format(
+                    DateTime.fromMillisecondsSinceEpoch(
                       data[index].dt.floor() * 1000,
-                      isUtc: true),
+                      isUtc: true,
+                    ),
+                  ),
+                  overflow: TextOverflow.fade,
+                  style: TextStyle(
+                    color: isDay
+                        ? Colors.black.withOpacity(0.9)
+                        : Colors.white.withOpacity(0.9),
+                    fontWeight: FontWeight.w500,
+                    // shadows: <Shadow>[
+                    //   Shadow(
+                    //     color: Colors.blue[200],
+                    //     blurRadius: 5,
+                    //   )
+                    // ],
+                  ),
                 ),
-                overflow: TextOverflow.fade,
-                style: TextStyle(
-                  color: isDay ? Colors.black : Colors.white,
-                  fontWeight: FontWeight.w500,
-                  // shadows: <Shadow>[
-                  //   Shadow(
-                  //     color: Colors.blue[200],
-                  //     blurRadius: 5,
-                  //   )
-                  // ],
+                const SizedBox(height: 3),
+                Text(
+                  '${kelvinToCelsiusString(
+                    data[index].temp.min,
+                  )}'
+                  '-'
+                  '${kelvinToCelsiusString(
+                    data[index].temp.max,
+                  )}°C',
+                  style: TextStyle(
+                    color: isDay ? Colors.black : Colors.white70,
+                  ),
                 ),
-              ),
-              Text(
-                '${kelvinToCelsiusString(
-                  data[index].temp.min,
-                )}'
-                '-'
-                '${kelvinToCelsiusString(
-                  data[index].temp.max,
-                )}°C',
-                style: TextStyle(
-                  color: isDay ? Colors.black : Colors.white70,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

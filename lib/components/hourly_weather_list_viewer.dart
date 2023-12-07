@@ -51,7 +51,10 @@ class HourlyWeatherListViewer extends StatelessWidget {
               Text(
                 DateFormat('HH').format(dtToDateTime(data[index].dt)),
                 style: TextStyle(
-                  color: isDay ? Colors.black : Colors.white70,
+                  color: isDay
+                      ? Colors.black.withOpacity(0.9)
+                      : Colors.white.withOpacity(0.9),
+                  fontWeight: FontWeight.w500,
                 ),
               ),
               Text(

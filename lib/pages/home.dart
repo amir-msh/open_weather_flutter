@@ -44,41 +44,41 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
+  void blocListener(BuildContext context, WeatherStatus status) {
+    Future.delayed(
+      const Duration(milliseconds: 6),
+      () {
+        if (_hourlyForecastListScrollController.hasClients &&
+            _dailyForecastListScrollController.hasClients) {
+          _hourlyForecastListScrollController
+            ..jumpTo(
+              _hourlyForecastListScrollController.position.maxScrollExtent / 4,
+            )
+            ..animateTo(
+              _hourlyForecastListScrollController.initialScrollOffset,
+              duration: const Duration(milliseconds: 1100),
+              curve: Curves.easeInOut,
+            );
+          _dailyForecastListScrollController
+            ..jumpTo(
+              _dailyForecastListScrollController.position.maxScrollExtent,
+            )
+            ..animateTo(
+              _dailyForecastListScrollController.initialScrollOffset,
+              duration: const Duration(milliseconds: 800),
+              curve: Curves.easeInOut,
+            );
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: BlocListener<WeatherCubit, WeatherStatus>(
-        listener: (context, d) {
-          Future.delayed(
-            const Duration(milliseconds: 6),
-            () {
-              if (_hourlyForecastListScrollController.hasClients &&
-                  _dailyForecastListScrollController.hasClients) {
-                _hourlyForecastListScrollController
-                  ..jumpTo(
-                    _hourlyForecastListScrollController
-                            .position.maxScrollExtent /
-                        4,
-                  )
-                  ..animateTo(
-                    _hourlyForecastListScrollController.initialScrollOffset,
-                    duration: const Duration(milliseconds: 1100),
-                    curve: Curves.easeInOut,
-                  );
-                _dailyForecastListScrollController
-                  ..jumpTo(
-                    _dailyForecastListScrollController.position.maxScrollExtent,
-                  )
-                  ..animateTo(
-                    _dailyForecastListScrollController.initialScrollOffset,
-                    duration: const Duration(milliseconds: 800),
-                    curve: Curves.easeInOut,
-                  );
-              }
-            },
-          );
-        },
+        listener: blocListener,
         listenWhen: (statusPrev, statusNow) {
           log(statusNow.runtimeType.toString());
           return statusNow is WeatherStatusOk;
@@ -180,7 +180,6 @@ class _HomePageState extends State<HomePage> {
                 ),
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 250),
-                  height: 200,
                   alignment: Alignment.center,
                   padding: const EdgeInsets.all(8),
                   child: Flex(
@@ -188,14 +187,15 @@ class _HomePageState extends State<HomePage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     direction: Axis.vertical,
                     children: [
-                      Expanded(
+                      SizedBox(
+                        height: 130,
                         child: Container(
                           clipBehavior: Clip.antiAlias,
                           decoration: const BoxDecoration(
                             borderRadius: BorderRadius.vertical(
                               top: Radius.circular(10),
                             ),
-                            color: Colors.white24,
+                            color: Colors.white10,
                           ),
                           child: BlocBuilder<WeatherCubit, WeatherStatus>(
                             builder: (context, data) {
@@ -223,17 +223,18 @@ class _HomePageState extends State<HomePage> {
                           return Divider(
                             thickness: 2.0,
                             color: isDay
-                                ? Colors.white.withAlpha(75)
-                                : Colors.black.withAlpha(75),
-                            height: 1,
+                                ? Colors.white.withOpacity(.30)
+                                : Colors.black.withOpacity(.01),
+                            height: 2.0,
                             indent: 0,
                             endIndent: 0,
                           );
                         },
                       ),
-                      Expanded(
+                      SizedBox(
+                        height: 90,
                         child: Container(
-                          color: Colors.white24,
+                          color: Colors.white10,
                           child: BlocBuilder<WeatherCubit, WeatherStatus>(
                             builder: (context, data) {
                               if (data is WeatherStatusOk) {
