@@ -4,9 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_weather_flutter/components/hourly_weather_list_viewer.dart';
 import 'package:open_weather_flutter/components/non_scrollable_child_refresh_indicator.dart';
+import 'package:open_weather_flutter/components/today_forecast_viewer.dart';
 import 'package:open_weather_flutter/components/weather_indicator_painter/weather_indicator_painter.dart';
 import 'package:open_weather_flutter/components/daily_weather_list_viewer.dart';
 import 'package:open_weather_flutter/utils/constants.dart';
+import 'package:open_weather_flutter/utils/weather_converters.dart';
 import 'package:open_weather_flutter/weather/weather_bloc.dart';
 import 'package:open_weather_flutter/weather/weather_state.dart';
 
@@ -60,7 +62,7 @@ class _HomePageState extends State<HomePage> {
                   )
                   ..animateTo(
                     _hourlyForecastListScrollController.initialScrollOffset,
-                    duration: const Duration(milliseconds: 900),
+                    duration: const Duration(milliseconds: 1100),
                     curve: Curves.easeInOut,
                   );
                 _dailyForecastListScrollController
@@ -69,7 +71,7 @@ class _HomePageState extends State<HomePage> {
                   )
                   ..animateTo(
                     _dailyForecastListScrollController.initialScrollOffset,
-                    duration: const Duration(milliseconds: 900),
+                    duration: const Duration(milliseconds: 800),
                     curve: Curves.easeInOut,
                   );
               }
@@ -77,6 +79,7 @@ class _HomePageState extends State<HomePage> {
           );
         },
         listenWhen: (statusPrev, statusNow) {
+          log(statusNow.runtimeType.toString());
           return statusNow is WeatherStatusOk;
         },
         child: Stack(
@@ -84,13 +87,13 @@ class _HomePageState extends State<HomePage> {
           alignment: Alignment.center,
           clipBehavior: Clip.none,
           children: [
-            BlocBuilder<WeatherCubit, WeatherStatus>(
-              builder: (context, data) {
-                final isDay = data is WeatherStatusOk
-                    ? data.weatherData.current.isDay
-                    : DateTime.now().hour > 6 && DateTime.now().hour < 18;
-                return Positioned.fill(
-                  child: AnimatedContainer(
+            Positioned.fill(
+              child: BlocBuilder<WeatherCubit, WeatherStatus>(
+                builder: (context, data) {
+                  final isDay = data is WeatherStatusOk
+                      ? data.weatherData.current.isDay
+                      : DateTime.now().hour > 6 && DateTime.now().hour < 18;
+                  return AnimatedContainer(
                     duration: const Duration(milliseconds: 1000),
                     curve: Curves.easeInOut,
                     decoration: BoxDecoration(
@@ -100,9 +103,9 @@ class _HomePageState extends State<HomePage> {
                         end: Alignment.topCenter,
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
             Flex(
               direction: Axis.vertical,
@@ -122,11 +125,28 @@ class _HomePageState extends State<HomePage> {
                     child: BlocBuilder<WeatherCubit, WeatherStatus>(
                       builder: (context, data) {
                         if (data is WeatherStatusOk) {
-                          return WeatherIndicatorPainter.fromIconCode(
-                            scale: 1.3,
-                            // iconCode: data.weatherData.current.weather[0].icon,
-                            iconCode: '2d',
-                            animation: true,
+                          final weatherData = data.weatherData;
+                          return TodayForecastViewer(
+                            weatherIndicator: const SizedBox(
+                              height: 275,
+                              child: WeatherIndicatorPainter(
+                                scale: 1.3,
+                                // iconCode: data.weatherData.current.weather[0].icon,
+                                code: WeatherCode.snow,
+                                animation: true,
+                              ),
+                            ),
+                            locationTitle: humanizeDescription(
+                              weatherData.timeZone,
+                            ),
+                            temperature: '${kelvinToCelsiusString(
+                              weatherData.current.temp,
+                            )}°',
+                            description:
+                                weatherData.current.weather.first.description,
+                            isCurrentLocation: data.isCurrentLocation,
+                            isDay: weatherData.current.isDay,
+                            onLocationButtonPressed: () {},
                           );
                         } else if (data is WeatherStatusError) {
                           return const Icon(Icons.error);

@@ -97,7 +97,7 @@ class WeatherIndicatorPainter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 1,
+      aspectRatio: 1.5,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 2),
         child: ClipRect(
@@ -108,7 +108,7 @@ class WeatherIndicatorPainter extends StatelessWidget {
               return LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                stops: const [0.85, 0.95, 1], // 0.85, 0.95, 1
+                stops: const [0.825, 0.95, 1], // 0.85, 0.95, 1
                 colors: <Color>[
                   Colors.black.withAlpha(255),
                   Colors.black.withAlpha(0),

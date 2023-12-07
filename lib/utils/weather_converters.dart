@@ -15,3 +15,9 @@ DateTime dtToDateTime(int dt, {bool isUtc = false}) {
     isUtc: isUtc,
   );
 }
+
+String humanizeDescription(
+  String description,
+) {
+  return description.replaceAll('/', ', ').replaceAll('_', ' ').trim();
+}
