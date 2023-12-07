@@ -21,6 +21,7 @@ class HourlyWeatherListViewer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
+      physics: const BouncingScrollPhysics(),
       controller: scrollController,
       scrollDirection: scrollDirection,
       padding: const EdgeInsets.symmetric(horizontal: 3),

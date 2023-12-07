@@ -21,8 +21,8 @@ class NonScrollableChildRefreshIndicator extends StatelessWidget {
           onRefresh: onRefresh,
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            child: ConstrainedBox(
-              constraints: constraints,
+            child: SizedBox.fromSize(
+              size: constraints.biggest,
               child: child,
             ),
           ),

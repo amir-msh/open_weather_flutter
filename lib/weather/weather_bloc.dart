@@ -24,31 +24,33 @@ class WeatherCubit extends Cubit<WeatherStatus> {
   }
 
   Future refreshWeatherData() async {
-    if (state is! WeatherStatusOk) return;
+    if (state is WeatherStatusOk) {
+      final okState = state as WeatherStatusOk;
+      final latestLocation = getLatestLocation(okState);
 
-    final okState = state as WeatherStatusOk;
-    final latestLocation = getLatestLocation(okState);
+      emit(WeatherStatusLoading());
 
-    emit(WeatherStatusLoading());
-
-    try {
-      emit(
-        WeatherStatusOk(
-          weatherData: await _weatherHelper.fetchWeather(
-            latestLocation.lat,
-            latestLocation.lon,
-            
+      try {
+        emit(
+          WeatherStatusOk(
+            weatherData: await _weatherHelper.fetchWeather(
+              latestLocation.lat,
+              latestLocation.lon,
+            ),
+            isCurrentLocation: okState.isCurrentLocation,
           ),
-          isCurrentLocation: okState.isCurrentLocation,
-        ),
-      );
-    } on TimeoutException {
-      emit(WeatherStatusError(WeatherStatusErrors.noInternet));
-    } on SocketException {
-      emit(WeatherStatusError(WeatherStatusErrors.noInternet));
-    } catch (e, s) {
-      log('Error', stackTrace: s);
-      emit(WeatherStatusError());
+        );
+      } on TimeoutException {
+        emit(WeatherStatusError(WeatherStatusErrors.noInternet));
+      } on SocketException {
+        emit(WeatherStatusError(WeatherStatusErrors.noInternet));
+      } catch (e, s) {
+        log('Error', stackTrace: s);
+        emit(WeatherStatusError());
+      }
+    } else {
+      await getCurrentLocationWeather();
+      return;
     }
   }
 

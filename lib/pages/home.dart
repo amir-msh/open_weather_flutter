@@ -160,9 +160,11 @@ class _HomePageState extends State<HomePage> {
                                     isDay: weatherData.current.isDay,
                                   );
                                 },
-                              ).whenComplete(() {
-                                log('Location picker closed!');
-                              });
+                              ).whenComplete(
+                                () {
+                                  log('Location picker closed!');
+                                },
+                              );
                             },
                           );
                         } else if (data is WeatherStatusError) {
