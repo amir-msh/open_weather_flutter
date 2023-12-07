@@ -48,7 +48,7 @@ class DailyWeatherListViewer extends StatelessWidget {
                 SizedBox(
                   height: 50,
                   child: WeatherIndicatorPainter.fromIconCode(
-                    scale: 0.28,
+                    scale: 0.3,
                     iconCode: data[index].weather.first.icon,
                   ),
                 ),

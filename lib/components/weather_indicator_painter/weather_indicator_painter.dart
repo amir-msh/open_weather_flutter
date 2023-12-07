@@ -36,15 +36,17 @@ const mapWeatherCodeToEnum = <int, WeatherCode>{
 
 class WeatherIndicatorPainter extends StatelessWidget {
   final double scale;
-  final bool animation;
   final WeatherCode? code;
   final bool isDay;
+  final double aspectRatio;
+  final bool animation;
 
   const WeatherIndicatorPainter({
     super.key,
     this.code,
     this.isDay = true,
     this.scale = 1.0,
+    this.aspectRatio = 1.5,
     this.animation = Globals.animationEnabledDefault,
   });
 
@@ -97,11 +99,12 @@ class WeatherIndicatorPainter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 1.5,
+      aspectRatio: aspectRatio,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 2),
-        child: ClipRect(
+        child: ClipPath(
           clipBehavior: Clip.hardEdge,
+          clipper: BottomClipper(),
           child: ShaderMask(
             blendMode: BlendMode.dstIn,
             shaderCallback: (Rect bounds) {
@@ -130,4 +133,23 @@ class WeatherIndicatorPainter extends StatelessWidget {
       ),
     );
   }
+}
+
+class BottomClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    const double c = 2;
+    return Path()
+      ..addRect(
+        Rect.fromLTWH(
+          -size.width * c,
+          -size.height * c,
+          size.width * (c * 2 + 1),
+          size.height * (c + 1),
+        ),
+      );
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }
