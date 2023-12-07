@@ -37,6 +37,7 @@ class WeatherCubit extends Cubit<WeatherStatus> {
           weatherData: await _weatherHelper.fetchWeather(
             latestLocation.lat,
             latestLocation.lon,
+            
           ),
           isCurrentLocation: okState.isCurrentLocation,
         ),

@@ -52,18 +52,12 @@ class WeatherCubit extends Cubit<WeatherStatus> {
   }
 
   Future getManualLocationWeather(double lat, double lon) async {
-    if (state is! WeatherStatusOk) return;
-
-    final okState = state as WeatherStatusOk;
-    final latestLocation = getLatestLocation(okState);
+    // if (state is! WeatherStatusOk) return;
 
     try {
       emit(
         WeatherStatusOk(
-          weatherData: await _weatherHelper.fetchWeather(
-            latestLocation.lat,
-            latestLocation.lon,
-          ),
+          weatherData: await _weatherHelper.fetchWeather(lat, lon),
           isCurrentLocation: false,
         ),
       );

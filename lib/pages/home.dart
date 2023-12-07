@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_weather_flutter/components/hourly_weather_list_viewer.dart';
+import 'package:open_weather_flutter/components/location_picker.dart';
 import 'package:open_weather_flutter/components/non_scrollable_child_refresh_indicator.dart';
 import 'package:open_weather_flutter/components/today_forecast_viewer.dart';
 import 'package:open_weather_flutter/components/weather_indicator_painter/weather_indicator_painter.dart';
@@ -127,12 +128,13 @@ class _HomePageState extends State<HomePage> {
                         if (data is WeatherStatusOk) {
                           final weatherData = data.weatherData;
                           return TodayForecastViewer(
-                            weatherIndicator: const SizedBox(
+                            weatherIndicator: SizedBox(
                               height: 275,
-                              child: WeatherIndicatorPainter(
+                              child: WeatherIndicatorPainter.fromIconCode(
                                 scale: 1.3,
-                                // iconCode: data.weatherData.current.weather[0].icon,
-                                code: WeatherCode.snow,
+                                iconCode:
+                                    data.weatherData.current.weather[0].icon,
+                                // code: WeatherCode.snow,
                                 animation: true,
                               ),
                             ),
@@ -146,7 +148,22 @@ class _HomePageState extends State<HomePage> {
                                 weatherData.current.weather.first.description,
                             isCurrentLocation: data.isCurrentLocation,
                             isDay: weatherData.current.isDay,
-                            onLocationButtonPressed: () {},
+                            onLocationButtonPressed: () async {
+                              await showModalBottomSheet(
+                                context: context,
+                                enableDrag: false,
+                                isDismissible: true,
+                                isScrollControlled: true,
+                                backgroundColor: Colors.transparent,
+                                builder: (BuildContext context) {
+                                  return LocationPicker(
+                                    isDay: weatherData.current.isDay,
+                                  );
+                                },
+                              ).whenComplete(() {
+                                log('Location picker closed!');
+                              });
+                            },
                           );
                         } else if (data is WeatherStatusError) {
                           return const Icon(Icons.error);
