@@ -119,12 +119,12 @@ class WeatherIndicatorPainter extends StatelessWidget {
                 ],
               ).createShader(bounds);
             },
-            child: Transform.scale(
-              scale: scale,
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 750),
-                switchInCurve: Curves.easeInOut,
-                switchOutCurve: Curves.easeInOut,
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 750),
+              switchInCurve: Curves.easeInOut,
+              switchOutCurve: Curves.easeInOut,
+              child: Transform.scale(
+                scale: scale,
                 child: painterSwitcher(),
               ),
             ),

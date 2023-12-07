@@ -57,8 +57,17 @@ class TodayForecastViewer extends StatelessWidget {
                 highlightElevation: 0,
                 disabledElevation: 0,
                 fillColor: isDay
-                    ? Colors.white.withAlpha(100)
-                    : Colors.black.withAlpha(150),
+                    ? Colors.white.withAlpha(90)
+                    : Colors.black.withAlpha(130),
+                focusColor: isDay
+                    ? Colors.white.withAlpha(150)
+                    : Colors.black.withAlpha(190),
+                hoverColor: isDay
+                    ? Colors.white.withAlpha(150)
+                    : Colors.black.withAlpha(190),
+                highlightColor: isDay
+                    ? Colors.white.withAlpha(210)
+                    : Colors.black.withAlpha(210),
                 splashColor: isDay ? Colors.white.withAlpha(150) : Colors.black,
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(

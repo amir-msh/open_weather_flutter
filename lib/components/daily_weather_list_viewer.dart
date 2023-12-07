@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:open_weather_flutter/components/weather_indicator_painter/weather_indicator_painter.dart';

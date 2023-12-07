@@ -130,11 +130,11 @@ class _HomePageState extends State<HomePage> {
                           return TodayForecastViewer(
                             weatherIndicator: SizedBox(
                               height: 275,
-                              child: WeatherIndicatorPainter.fromIconCode(
+                              child: WeatherIndicatorPainter(
                                 scale: 1.3,
-                                iconCode:
-                                    data.weatherData.current.weather[0].icon,
-                                // code: WeatherCode.snow,
+                                // iconCode:
+                                //     data.weatherData.current.weather[0].icon,
+                                code: WeatherCode.snow,
                                 animation: true,
                               ),
                             ),
