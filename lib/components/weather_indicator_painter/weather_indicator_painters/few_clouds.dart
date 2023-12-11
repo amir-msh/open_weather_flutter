@@ -92,7 +92,7 @@ class _FewCloudsCustomPainter extends CustomPainter {
         Offset.zero,
         40,
         Paint()
-          ..color = Color(0xFF99988a)
+          ..color = const Color(0xFFacab9f)
           ..isAntiAlias = Globals.moonPaint.isAntiAlias,
       );
       return;
