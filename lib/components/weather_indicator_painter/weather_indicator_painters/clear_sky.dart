@@ -127,7 +127,7 @@ class _ClearSkyCustomPainter extends CustomPainter {
   }
 
   void drawMoon(Canvas canvas, Size size) {
-    final double slope = -1.5 +
+    final double slope = -1.37 +
         Tween<double>(
           begin: -0.1,
           end: 0.1,
@@ -158,27 +158,58 @@ class _ClearSkyCustomPainter extends CustomPainter {
         clockwise: true,
       );
 
+    final blur = Tween<double>(
+      begin: 2.5,
+      end: 5,
+    ).transform(animationValue);
+
+    canvas.drawPath(
+      path,
+      Paint()
+        ..isAntiAlias = Globals.moonPaint.isAntiAlias
+        ..color = Colors.grey[300]!
+        ..imageFilter = ImageFilter.blur(
+          sigmaX: blur,
+          sigmaY: blur,
+          tileMode: TileMode.decal,
+        ),
+    );
+
     canvas.drawPath(
       path,
       Paint()
         ..isAntiAlias = Globals.moonPaint.isAntiAlias
         ..color = Globals.moonPaint.color
         ..shader = RadialGradient(
-          colors: [
-            Colors.grey[600]!,
-            const Color(0xFFe5e5e5),
+          colors: const [
+            Colors.white,
+            Color(0xFFe5e5e5),
+            Colors.white,
           ],
-          radius: 0.6,
-          tileMode: TileMode.mirror,
-          center: Alignment(-1, -1),
-          stops: [0.20, 0.6],
-        ).createShader(
-          Rect.fromLTWH(
-            -18,
-            -10,
-            160,
-            160,
+          // const [
+          //   Color(0xFFe5e5e5),
+          //   Color.fromARGB(255, 196, 188, 190),
+          //   Color(0xFFe5e5e5),
+          // ],
+          radius: 0.78,
+          tileMode: TileMode.clamp,
+          center: Alignment(
+            Tween<double>(
+              begin: -1.05,
+              end: -1.1,
+            ).transform(animationValue),
+            Tween<double>(
+              begin: -1,
+              end: -1.2,
+            ).transform(animationValue),
           ),
+          stops: const [
+            0.2,
+            0.5,
+            0.95,
+          ],
+        ).createShader(
+          const Rect.fromLTWH(-18, -9, 160, 160),
         ),
     );
   }
