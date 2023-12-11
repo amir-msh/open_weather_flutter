@@ -20,6 +20,7 @@ class DailyWeatherListViewer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
+      shrinkWrap: true,
       physics: const BouncingScrollPhysics(),
       controller: scrollController,
       scrollDirection: scrollDirection,
@@ -77,7 +78,7 @@ class DailyWeatherListViewer extends StatelessWidget {
                   '${kelvinToCelsiusString(
                     data[index].temp.min,
                   )}'
-                  '-'
+                  ' / '
                   '${kelvinToCelsiusString(
                     data[index].temp.max,
                   )}°C',

@@ -423,7 +423,7 @@ class _LocationPickerState extends State<LocationPicker> {
               ),
               Positioned(
                 left: 0,
-                top: MediaQuery.of(context).padding.top + 75,
+                top: MediaQuery.of(context).padding.top + 75 + topPadding,
                 right: 0,
                 bottom: MediaQuery.of(context).viewInsets.bottom,
                 child: RepaintBoundary(

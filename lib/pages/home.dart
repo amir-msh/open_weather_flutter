@@ -172,15 +172,49 @@ class _HomePageState extends State<HomePage> {
                               },
                             );
                           } else if (data is WeatherStatusError) {
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  Icons.error,
-                                  size: 30,
+                            return Center(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(25),
+                                  color: Colors.white54,
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      blurRadius: 10,
+                                      blurStyle: BlurStyle.outer,
+                                      color: Colors.black38,
+                                    )
+                                  ],
                                 ),
-                                Text(data.error.message),
-                              ],
+                                padding: const EdgeInsets.all(15),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.error,
+                                      size: 37,
+                                      color: Colors.red[800]!,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      data.error.message,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black87,
+                                      ),
+                                      softWrap: true,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    TextButton(
+                                      onPressed:
+                                          BlocProvider.of<WeatherCubit>(context)
+                                              .refreshWeatherData,
+                                      child: const Text('Try again!'),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             );
                           } else {
                             return const Center(
@@ -204,10 +238,8 @@ class _HomePageState extends State<HomePage> {
                           height: 130,
                           child: Container(
                             clipBehavior: Clip.antiAlias,
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(10),
-                              ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
                               color: Colors.white10,
                             ),
                             child: BlocBuilder<WeatherCubit, WeatherStatus>(
@@ -219,6 +251,8 @@ class _HomePageState extends State<HomePage> {
                                     data.weatherData.daily,
                                     isDay: data.weatherData.current.isDay,
                                   );
+                                } else if (data is WeatherStatusError) {
+                                  return const SizedBox();
                                 }
                                 return const Center(
                                   child: CircularProgressIndicator.adaptive(),
@@ -227,27 +261,33 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                         ),
-                        BlocBuilder<WeatherCubit, WeatherStatus>(
-                          builder: (context, data) {
-                            final isDay = data is WeatherStatusOk
-                                ? data.weatherData.current.isDay
-                                : DateTime.now().hour > 6 &&
-                                    DateTime.now().hour < 18;
-                            return Divider(
-                              thickness: 2.0,
-                              color: isDay
-                                  ? Colors.white.withOpacity(.30)
-                                  : Colors.black.withOpacity(.01),
-                              height: 2.0,
-                              indent: 0,
-                              endIndent: 0,
-                            );
-                          },
-                        ),
+                        // BlocBuilder<WeatherCubit, WeatherStatus>(
+                        //   builder: (context, data) {
+                        //     final isDay = data is WeatherStatusOk
+                        //         ? data.weatherData.current.isDay
+                        //         : DateTime.now().hour > 6 &&
+                        //             DateTime.now().hour < 18;
+                        //     return Divider(
+                        //       thickness: 2.0,
+                        //       color: isDay
+                        //           ? Colors.white.withOpacity(.30)
+                        //           : Colors.black.withOpacity(.01),
+                        //       height: 2.0,
+                        //       indent: 0,
+                        //       endIndent: 0,
+                        //     );
+                        //   },
+                        // ),
+                        const SizedBox(height: 10),
                         SizedBox(
                           height: 90,
                           child: Container(
-                            color: Colors.white10,
+                            decoration: BoxDecoration(
+                              color: Colors.white10,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            constraints:
+                                const BoxConstraints.expand(width: 1000),
                             child: BlocBuilder<WeatherCubit, WeatherStatus>(
                               builder: (context, data) {
                                 if (data is WeatherStatusOk) {
@@ -257,6 +297,8 @@ class _HomePageState extends State<HomePage> {
                                     data.weatherData.hourly,
                                     isDay: data.weatherData.current.isDay,
                                   );
+                                } else if (data is WeatherStatusError) {
+                                  return const SizedBox();
                                 }
                                 return const Center(
                                   child: CircularProgressIndicator.adaptive(),

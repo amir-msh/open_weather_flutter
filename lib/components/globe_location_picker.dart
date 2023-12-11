@@ -30,6 +30,7 @@ class _GlobeLocationPickerState extends State<GlobeLocationPicker>
   final _locationLabelNotifier = ValueNotifier<String?>('');
   final _locationChangeNotifier = ValueNotifier<LatLonAltPosition?>(null);
   final _locationPinNotifier = ValueNotifier<bool>(false);
+  FlutterEarthController? earthController;
   bool isEarthAnimating = true;
 
   Timer? _timer;
@@ -54,7 +55,7 @@ class _GlobeLocationPickerState extends State<GlobeLocationPicker>
       return;
     }
 
-    if (kDebugMode) {
+    if (kDebugMode && false) {
       await Future.delayed(const Duration(milliseconds: 1000));
       _locationLabelNotifier.value =
           '${_locationChangeNotifier.value!.$1.toStringAsFixed(6)}'
@@ -224,6 +225,8 @@ class _GlobeLocationPickerState extends State<GlobeLocationPicker>
                                 const Duration(milliseconds: 750),
                               );
 
+                              earthController = controller;
+
                               controller.animateCamera(
                                 panSpeed: 100,
                                 riseSpeed: 0.45,
@@ -274,30 +277,35 @@ class _GlobeLocationPickerState extends State<GlobeLocationPicker>
                       right: 8,
                       bottom: 8 + MediaQuery.of(context).padding.bottom,
                       height: 45,
-                      child: AnimatedOpacity(
-                        duration: const Duration(milliseconds: 1000),
-                        curve: Curves.easeInOut,
-                        opacity: isEarthAnimating ? 0.0 : 1.0,
-                        child: RawMaterialButton(
-                          onPressed: isEarthAnimating
-                              ? null
-                              : () {
-                                  Navigator.pop<LatLonAltPosition>(
-                                    context,
-                                    _locationChangeNotifier.value,
-                                  );
-                                },
-                          disabledElevation: 0,
-                          fillColor: Colors.grey[300],
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Text(
-                            'Select this location!',
-                            style: TextStyle(
-                              fontSize: 17.5,
-                              color: Colors.black87,
-                              fontWeight: FontWeight.w500,
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints.expand(width: 500),
+                          child: AnimatedOpacity(
+                            duration: const Duration(milliseconds: 1000),
+                            curve: Curves.easeInOut,
+                            opacity: isEarthAnimating ? 0.0 : 1.0,
+                            child: RawMaterialButton(
+                              onPressed: isEarthAnimating
+                                  ? null
+                                  : () {
+                                      Navigator.pop<LatLonAltPosition>(
+                                        context,
+                                        _locationChangeNotifier.value,
+                                      );
+                                    },
+                              disabledElevation: 0,
+                              fillColor: Colors.grey[300],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Text(
+                                'Select this location!',
+                                style: TextStyle(
+                                  fontSize: 17.5,
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ),
                           ),
                         ),
