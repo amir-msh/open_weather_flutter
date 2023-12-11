@@ -214,6 +214,7 @@ class _GlobeLocationPickerState extends State<GlobeLocationPicker>
                             // ).createShader(rect);
                           },
                           child: FlutterEarth(
+                            maxVertexCount: 1500,
                             url:
                                 'http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}',
                             radius: 200,
@@ -337,6 +338,7 @@ class _GlobeLocationPickerState extends State<GlobeLocationPicker>
                                     const SizedBox(width: 2),
                                     Text(
                                       label!,
+                                      // textDirection: TextDirection.rtl,
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w700,

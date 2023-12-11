@@ -137,7 +137,8 @@ class _HomePageState extends State<HomePage> {
                                 child: WeatherIndicatorPainter.fromIconCode(
                                   iconCode:
                                       data.weatherData.current.weather[0].icon,
-                                  // code: WeatherCode.snow,
+                                  // code: WeatherCode.fewClouds,
+                                  // isDay: false,
                                   scale: 1.3,
                                   animation: true,
                                 ),

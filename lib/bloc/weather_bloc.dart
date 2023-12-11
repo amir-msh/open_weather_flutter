@@ -2,11 +2,12 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:open_weather_flutter/http_helpers/weather/weather_http_helper.dart';
+import 'package:open_weather_flutter/weather/weather_state.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bloc/bloc.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:open_weather_flutter/http_helpers/weather/weather_http_helper.dart';
-import 'package:open_weather_flutter/weather/weather_state.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class WeatherCubit extends Cubit<WeatherStatus> {

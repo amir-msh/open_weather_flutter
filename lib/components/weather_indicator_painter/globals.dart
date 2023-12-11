@@ -14,7 +14,7 @@ class Globals {
 
   static Paint moonPaint = Paint()
     ..isAntiAlias = isAntiAlias
-    ..color = const Color.fromARGB(255, 160, 150, 150);
+    ..color = const Color(0xFFe5e5e5); // or 0xFFF6F1D5
 
   static Paint cloudPaint1 = Paint()
     ..isAntiAlias = isAntiAlias

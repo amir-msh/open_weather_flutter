@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:developer';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui';
@@ -338,20 +339,29 @@ class FlutterEarthState extends State<FlutterEarth>
 
     tile.status = TileStatus.fetching;
     final c = Completer<Image>();
+
+    // fintile.z;
+
     final url = widget.url
-        .replaceAll('{z}', '${tile.z}')
         .replaceAll('{x}', '${tile.x}')
-        .replaceAll('{y}', '${tile.y}');
+        .replaceAll('{y}', '${tile.y}')
+        .replaceAll('{z}', '${tile.z}');
+
+    log('uri: $url');
+
     final networkImage = NetworkImage(url);
     final imageStream = networkImage.resolve(const ImageConfiguration());
     imageStream.addListener(
-      ImageStreamListener((ImageInfo imageInfo, bool synchronousCall) {
+      ImageStreamListener((
+        ImageInfo imageInfo,
+        bool synchronousCall,
+      ) {
         c.complete(imageInfo.image);
       }),
     );
     tile.image = await c.future;
     tile.status = TileStatus.ready;
-    if (widget.onTileEnd != null) widget.onTileEnd!(tile);
+    widget.onTileEnd?.call(tile);
     if (mounted) setState(() {});
 
     return tile;

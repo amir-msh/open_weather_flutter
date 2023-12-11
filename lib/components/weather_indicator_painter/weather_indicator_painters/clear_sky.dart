@@ -78,7 +78,7 @@ class _ClearSkyCustomPainter extends CustomPainter {
     if (day) {
       drawSun(canvas);
     } else {
-      drawMoon(canvas);
+      drawMoon(canvas, size);
     }
   }
 
@@ -126,7 +126,7 @@ class _ClearSkyCustomPainter extends CustomPainter {
     );
   }
 
-  void drawMoon(Canvas canvas) {
+  void drawMoon(Canvas canvas, Size size) {
     final double slope = -1.5 +
         Tween<double>(
           begin: -0.1,
@@ -135,9 +135,9 @@ class _ClearSkyCustomPainter extends CustomPainter {
           animationValue,
         );
 
-    const double magnitude = 1.0;
-    const double radius = 55;
-    const double innerRadius = 40;
+    const double magnitude = 0.8;
+    const double radius = 57;
+    const double innerRadius = 55;
 
     final startOffset = Offset.fromDirection(
       slope - pi + magnitude,
@@ -160,7 +160,26 @@ class _ClearSkyCustomPainter extends CustomPainter {
 
     canvas.drawPath(
       path,
-      Globals.moonPaint,
+      Paint()
+        ..isAntiAlias = Globals.moonPaint.isAntiAlias
+        ..color = Globals.moonPaint.color
+        ..shader = RadialGradient(
+          colors: [
+            Colors.grey[600]!,
+            const Color(0xFFe5e5e5),
+          ],
+          radius: 0.6,
+          tileMode: TileMode.mirror,
+          center: Alignment(-1, -1),
+          stops: [0.20, 0.6],
+        ).createShader(
+          Rect.fromLTWH(
+            -18,
+            -10,
+            160,
+            160,
+          ),
+        ),
     );
   }
 
