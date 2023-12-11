@@ -21,29 +21,28 @@ class _RainState extends State<Rain> with SingleTickerProviderStateMixin {
     _rainAnimation = Tween<double>(
             begin: -Globals.dropsDistance + Globals.startRainFrom,
             end: 0 + Globals.startRainFrom)
-        .animate(_controller)
-      //..drive(CurveTween(curve: Curves.easeInCirc))
-      ..addListener(() => setState(() {}))
-      ..addStatusListener(
-        (AnimationStatus status) {
-          if (status == AnimationStatus.completed) {
-            _controller.repeat();
-          } else if (status == AnimationStatus.dismissed) {
-            _controller.forward();
-          }
-        },
-      );
-    if (widget.animation) _controller.forward();
+        .animate(_controller);
+
+    if (widget.animation) {
+      _controller.repeat(reverse: true);
+    }
 
     super.initState();
   }
 
   @override
-  Widget build(BuildContext context) => CustomPaint(
-        painter: _RainCustomPainter(widget.day, _rainAnimation.value),
-        willChange: true,
-        isComplex: true,
-      );
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return CustomPaint(
+          painter: _RainCustomPainter(widget.day, _rainAnimation.value),
+          willChange: true,
+          isComplex: true,
+        );
+      },
+    );
+  }
 
   @override
   void dispose() {
@@ -106,12 +105,13 @@ class _RainCustomPainter extends CustomPainter {
       rainYChanges = -rainYChanges;
       for (int i = 0; i < dropsNumber; i++) {
         canvas.drawLine(
-            Offset.fromDirection(rainRadian, (i * Globals.dropsDistance)) +
-                lineOffset,
-            Offset.fromDirection(
-                    rainRadian, (i * Globals.dropsDistance) + dropsHeight) +
-                lineOffset,
-            paint);
+          Offset.fromDirection(rainRadian, (i * Globals.dropsDistance)) +
+              lineOffset,
+          Offset.fromDirection(
+                  rainRadian, (i * Globals.dropsDistance) + dropsHeight) +
+              lineOffset,
+          paint,
+        );
       }
     }
 
@@ -127,7 +127,10 @@ class _RainCustomPainter extends CustomPainter {
 
   void drawSun(Canvas canvas) {
     canvas.drawCircle(
-        const Offset(40, -14), 40, day ? Globals.sunPaint : Globals.moonPaint);
+      const Offset(40, -14),
+      40,
+      day ? Globals.sunPaint : Globals.moonPaint,
+    );
   }
 
   void drawCloud(Canvas canvas) {

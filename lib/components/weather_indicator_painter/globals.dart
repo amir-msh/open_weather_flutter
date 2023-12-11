@@ -10,7 +10,7 @@ class Globals {
 
   static Paint sunPaint = Paint()
     ..isAntiAlias = isAntiAlias
-    ..color = Colors.red;
+    ..color = const Color(0xfffa881b);
 
   static Paint moonPaint = Paint()
     ..isAntiAlias = isAntiAlias
