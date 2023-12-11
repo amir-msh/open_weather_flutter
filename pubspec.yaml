@@ -42,6 +42,11 @@ dependencies:
   geolocator: ^10.1.0
   intl: ^0.18.1
   mapbox_search: ^4.2.0
+  vector_math: ^2.1.4
+  # simple_3d_renderer: ^18.2.6
+  # playx_3d_scene: ^0.0.3
+  # model_viewer_plus: ^1.7.0
+  # o3d: ^3.1.0
 
 dev_dependencies:
   flutter_test:
@@ -66,9 +71,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

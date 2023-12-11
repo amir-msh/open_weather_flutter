@@ -6,9 +6,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_weather_flutter/components/globe_location_picker.dart';
 
 import 'package:open_weather_flutter/utils/credentials.dart';
 import 'package:open_weather_flutter/weather/weather_bloc.dart';
+import 'package:open_weather_flutter/weather/weather_state.dart';
 
 import 'package:mapbox_search/mapbox_search.dart' as mb_search;
 import 'package:mapbox_search/models/failure_response.dart'
@@ -37,6 +39,10 @@ class _LocationPickerState extends State<LocationPicker> {
   final rand = Random();
 
   final _placeListController = ScrollController();
+
+  final _searchBoxFocusNode = FocusNode();
+  final _pageFocusNode = FocusNode();
+  final double topPadding = 30;
 
   Timer searchTimer = Timer(const Duration(seconds: 0), () {});
 
@@ -290,13 +296,25 @@ class _LocationPickerState extends State<LocationPicker> {
   void dispose() {
     _suggestedPlacesNotifier.dispose();
     _searchBoxController.dispose();
+    _searchBoxFocusNode.dispose();
     searchTimer.cancel();
     super.dispose();
   }
 
   @override
+  void initState() {
+    Future.delayed(
+      const Duration(milliseconds: 500),
+      () {
+        _searchBoxFocusNode.requestFocus();
+      },
+    );
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final mediaQueryData = MediaQuery.of(context);
     return Scaffold(
       backgroundColor: Colors.transparent,
       primary: true,
@@ -315,13 +333,16 @@ class _LocationPickerState extends State<LocationPicker> {
             children: <Widget>[
               Positioned(
                 left: 20,
-                top: mediaQueryData.padding.top + 20, // here
+                top: MediaQuery.of(context).padding.top +
+                    20 +
+                    topPadding, // here
                 right: 20,
                 height: 70,
                 child: TextField(
+                  focusNode: _searchBoxFocusNode,
                   showCursor: true,
                   autocorrect: true,
-                  autofocus: true,
+                  autofocus: false,
                   enableSuggestions: true,
                   scrollPhysics: const BouncingScrollPhysics(),
                   inputFormatters: <TextInputFormatter>[
@@ -402,7 +423,7 @@ class _LocationPickerState extends State<LocationPicker> {
               ),
               Positioned(
                 left: 0,
-                top: mediaQueryData.padding.top + 75,
+                top: MediaQuery.of(context).padding.top + 75,
                 right: 0,
                 bottom: MediaQuery.of(context).viewInsets.bottom,
                 child: RepaintBoundary(
@@ -435,7 +456,63 @@ class _LocationPickerState extends State<LocationPicker> {
                           );
                         } else if (value.isEmpty &&
                             _searchBoxController.text.isEmpty) {
-                          searchResult = const SizedBox();
+                          searchResult = Align(
+                            alignment: Alignment.topCenter,
+                            child: Padding(
+                              padding:
+                                  EdgeInsets.only(top: 20 + topPadding - 10),
+                              child: RawMaterialButton(
+                                onPressed: () async {
+                                  final selectedPosition =
+                                      await Navigator.of(context)
+                                          .push<LatLonAltPosition?>(
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        final state =
+                                            BlocProvider.of<WeatherCubit>(
+                                                    context)
+                                                .state;
+
+                                        if (state is WeatherStatusOk) {
+                                          return GlobeLocationPicker(
+                                            initialPosition: (
+                                              state.weatherData.lat.toDouble(),
+                                              state.weatherData.lon.toDouble(),
+                                              null,
+                                            ),
+                                          );
+                                        } else {
+                                          return const GlobeLocationPicker();
+                                        }
+                                      },
+                                    ),
+                                  );
+
+                                  if (selectedPosition != null &&
+                                      context.mounted) {
+                                    FocusScope.of(context)
+                                        .requestFocus(_pageFocusNode);
+
+                                    BlocProvider.of<WeatherCubit>(context)
+                                        .getManualLocationWeather(
+                                      selectedPosition.$1,
+                                      selectedPosition.$2,
+                                    );
+                                    Navigator.of(context).pop();
+                                  }
+                                },
+                                fillColor: Colors.white.withOpacity(0.9),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 9,
+                                  horizontal: 20,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Text('Select location on map'),
+                              ),
+                            ),
+                          );
                         } else if (value.isEmpty &&
                             _searchBoxController.text.isNotEmpty) {
                           searchResult = Center(

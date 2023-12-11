@@ -1,10 +1,14 @@
 import 'package:open_weather_flutter/http_helpers/weather/weather.dart';
 
 enum WeatherStatusErrors {
-  noInternet,
-  noLocation,
-  noAccess,
-  unknown,
+  noInternet('No internet connection!'),
+  noLocation('Location is not available!'),
+  noAccess('Location permission is denied!'),
+  unknown('An unknown error was happened!');
+
+  const WeatherStatusErrors(this.message);
+
+  final String message;
 }
 
 sealed class WeatherStatus {
