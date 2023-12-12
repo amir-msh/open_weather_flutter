@@ -6,6 +6,7 @@ import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:open_weather_flutter/components/flutter_earth.dart';
 import 'package:open_weather_flutter/utils/credentials.dart';
 
@@ -103,9 +104,72 @@ class _GlobeLocationPickerState extends State<GlobeLocationPicker>
         },
       );
 
-      final placeName = features.first['place_name'];
+      // final String briefPlaceName = features.firstOrNull?['place_name'] ?? '';
 
-      _locationLabelNotifier.value = placeName;
+      final placeContext = (features.firstOrNull?['context'] as List?);
+
+      // (postcode) | (poi)
+      final ignoredTypesRegExp = RegExp(
+        ignoredTypes.map((type) => '($type)').join('|'),
+        caseSensitive: false,
+      );
+
+      placeContext?.removeWhere(
+        (e) {
+          final id = e['id'] as String;
+          return id.startsWith(ignoredTypesRegExp);
+        },
+      );
+
+      final labelParts =
+          placeContext?.map((part) => part['text'].toString()).toList();
+
+      final briefPlaceName = labelParts?.join(', ') ?? '';
+
+      // "place_name": "Mdr072, 825321, Serangdag, Tandwa, Chatra, Jharkhand, India",
+      // "context": [
+      //   {
+      //     "id": "postcode.150752875",
+      //     "mapbox_id": "dXJuOm1ieHBsYzpDUHhPYXc",
+      //     "text": "825321"
+      //   },
+      //   {
+      //     "id": "locality.3705358955",
+      //     "mapbox_id": "dXJuOm1ieHBsYzozTnRLYXc",
+      //     "text": "Serangdag"
+      //   },
+      //   {
+      //     "id": "place.43804779",
+      //     "mapbox_id": "dXJuOm1ieHBsYzpBcHhvYXc",
+      //     "text": "Tandwa"
+      //   },
+      //   {
+      //     "id": "district.1025643",
+      //     "mapbox_id": "dXJuOm1ieHBsYzpENlpy",
+      //     "wikidata": "Q1979499",
+      //     "text": "Chatra"
+      //   },
+      //   {
+      //     "id": "region.83051",
+      //     "mapbox_id": "dXJuOm1ieHBsYzpBVVJy",
+      //     "wikidata": "Q1184",
+      //     "short_code": "IN-JH",
+      //     "text": "Jharkhand"
+      //   },
+      //   {
+      //     "id": "country.8811",
+      //     "mapbox_id": "dXJuOm1ieHBsYzpJbXM",
+      //     "wikidata": "Q668",
+      //     "short_code": "in",
+      //     "text": "India"
+      //   }
+      // ]
+
+      if (briefPlaceName.isEmpty) {
+        _locationLabelNotifier.value = 'Unknown place!';
+      } else {
+        _locationLabelNotifier.value = briefPlaceName;
+      }
     } catch (e) {
       d.log('ERROR!', error: e);
       _locationLabelNotifier.value = 'No Internet!';
@@ -313,7 +377,7 @@ class _GlobeLocationPickerState extends State<GlobeLocationPicker>
                       ),
                     ),
                     Positioned.fill(
-                      top: MediaQuery.of(context).padding.top,
+                      top: MediaQuery.of(context).padding.top + 35,
                       child: Align(
                         alignment: Alignment.topCenter,
                         child: ValueListenableBuilder<String?>(
@@ -322,33 +386,84 @@ class _GlobeLocationPickerState extends State<GlobeLocationPicker>
                             late final Widget result;
 
                             if (label?.isNotEmpty ?? false) {
-                              result = Padding(
-                                key: ValueKey(label),
-                                padding: const EdgeInsets.fromLTRB(7, 7, 13, 9),
-                                child: Row(
-                                  key: ValueKey(label),
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.location_on_outlined,
-                                      color: Colors.red[600]!,
-                                    ),
-                                    const SizedBox(width: 2),
-                                    Text(
-                                      label!,
-                                      // textDirection: TextDirection.rtl,
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.blueGrey[900]!,
+                              result = GestureDetector(
+                                onTap: () async {
+                                  final copyText =
+                                      '(${_locationChangeNotifier.value?.$1.toStringAsFixed(6)}'
+                                      ', '
+                                      '${_locationChangeNotifier.value?.$2.toStringAsFixed(6)})'
+                                      ': $label';
+                                  d.log(
+                                    'The location copied to the clipboard! : $copyText',
+                                  );
+                                  await Clipboard.setData(
+                                    ClipboardData(text: copyText),
+                                  );
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(10),
+                                          ),
+                                        ),
+                                        duration: Duration(milliseconds: 1250),
+                                        behavior: SnackBarBehavior.floating,
+                                        margin: EdgeInsets.fromLTRB(
+                                          20,
+                                          0,
+                                          20,
+                                          70,
+                                        ),
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 10,
+                                          horizontal: 15,
+                                        ),
+                                        content: Text(
+                                          'The location label copied to the clipboard!',
+                                        ),
                                       ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      softWrap: false,
-                                    ),
-                                  ],
+                                    );
+                                  }
+                                },
+                                child: Padding(
+                                  key: ValueKey(label),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(7, 7, 13, 9),
+                                  child: Row(
+                                    key: ValueKey(label),
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.location_on_outlined,
+                                        color: Colors.red[600]!,
+                                      ),
+                                      const SizedBox(width: 4.5),
+                                      ConstrainedBox(
+                                        constraints: BoxConstraints(
+                                          maxWidth: MediaQuery.of(context)
+                                                  .size
+                                                  .width -
+                                              90,
+                                        ),
+                                        child: Text(
+                                          label!,
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.blueGrey[900]!,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          softWrap: true,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               );
                             } else {
@@ -371,7 +486,7 @@ class _GlobeLocationPickerState extends State<GlobeLocationPicker>
                               child: Container(
                                 margin: const EdgeInsets.all(20),
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
+                                  borderRadius: BorderRadius.circular(12.5),
                                   color: Colors.white.withOpacity(0.75),
                                   boxShadow: [
                                     BoxShadow(
