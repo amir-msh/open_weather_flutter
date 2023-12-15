@@ -863,46 +863,50 @@ class FlutterEarthState extends State<FlutterEarth>
     _lastRotationAxis = Vector3(0, 0, 1.0);
 
     animController = AnimationController(vsync: this)
-      ..addListener(() {
-        if (mounted) {
-          setState(() {
-            if (!animController!.isCompleted) {
-              if (panAnimation != null) {
-                final q = Quaternion.axisAngle(
-                  _lastRotationAxis!,
-                  panAnimation!.value,
-                );
-                quaternion = _lastQuaternion! * q;
-              }
-              if (riseAnimation != null) {
-                if (animController!.value < _panCurveEnd) {
-                  zoom = riseAnimation!.value;
+      ..addListener(
+        () {
+          if (mounted) {
+            setState(
+              () {
+                if (!animController!.isCompleted) {
+                  if (panAnimation != null) {
+                    final q = Quaternion.axisAngle(
+                      _lastRotationAxis!,
+                      panAnimation!.value,
+                    );
+                    quaternion = _lastQuaternion! * q;
+                  }
+                  if (riseAnimation != null) {
+                    if (animController!.value < _panCurveEnd) {
+                      zoom = riseAnimation!.value;
+                    }
+                  }
+                  if (zoomAnimation != null) {
+                    if (animController!.value >= _panCurveEnd) {
+                      zoom = zoomAnimation!.value;
+                    }
+                  }
+                  if (widget.onCameraMove != null) {
+                    widget.onCameraMove!(position, zoom!);
+                  }
+                } else {
+                  _panCurveEnd = 0;
                 }
-              }
-              if (zoomAnimation != null) {
-                if (animController!.value >= _panCurveEnd) {
-                  zoom = zoomAnimation!.value;
-                }
-              }
-              if (widget.onCameraMove != null) {
-                widget.onCameraMove!(position, zoom!);
-              }
-            } else {
-              _panCurveEnd = 0;
-            }
-          });
-        }
-      });
+              },
+            );
+          }
+        },
+      );
 
     _controller = FlutterEarthController(this);
     if (widget.onMapCreated != null) {
       widget.onMapCreated!(_controller!);
     }
 
-    loadImageFromAsset('assets/google_map_north_pole.png').then(
+    loadImageFromAsset('assets/earth_map/google_map_north_pole.png').then(
       (Image value) => northPoleImage = value,
     );
-    loadImageFromAsset('assets/google_map_south_pole.png').then(
+    loadImageFromAsset('assets/earth_map/google_map_south_pole.png').then(
       (Image value) => southPoleImage = value,
     );
   }

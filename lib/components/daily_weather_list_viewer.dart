@@ -9,9 +9,9 @@ class DailyWeatherListViewer extends StatelessWidget {
   final bool isDay;
   final Axis scrollDirection;
   final ScrollController? scrollController;
-  const DailyWeatherListViewer(
-    this.data, {
+  const DailyWeatherListViewer({
     super.key,
+    required this.data,
     this.scrollDirection = Axis.horizontal,
     this.scrollController,
     required this.isDay,

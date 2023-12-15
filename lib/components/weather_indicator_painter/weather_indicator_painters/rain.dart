@@ -19,12 +19,12 @@ class _RainState extends State<Rain> with SingleTickerProviderStateMixin {
     _controller = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 750));
     _rainAnimation = Tween<double>(
-            begin: -Globals.dropsDistance + Globals.startRainFrom,
-            end: 0 + Globals.startRainFrom)
-        .animate(_controller);
+      begin: -Globals.dropsDistance + Globals.startRainFrom,
+      end: 0 + Globals.startRainFrom,
+    ).animate(_controller);
 
     if (widget.animation) {
-      _controller.repeat(reverse: true);
+      _controller.repeat();
     }
 
     super.initState();

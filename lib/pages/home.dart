@@ -247,9 +247,9 @@ class _HomePageState extends State<HomePage> {
                               builder: (context, data) {
                                 if (data is WeatherStatusOk) {
                                   return DailyWeatherListViewer(
+                                    data: data.weatherData.daily,
                                     scrollController:
                                         _dailyForecastListScrollController,
-                                    data.weatherData.daily,
                                     isDay: data.weatherData.current.isDay,
                                   );
                                 } else if (data is WeatherStatusError) {
@@ -293,9 +293,9 @@ class _HomePageState extends State<HomePage> {
                               builder: (context, data) {
                                 if (data is WeatherStatusOk) {
                                   return HourlyWeatherListViewer(
+                                    data: data.weatherData.hourly,
                                     scrollController:
                                         _hourlyForecastListScrollController,
-                                    data.weatherData.hourly,
                                     isDay: data.weatherData.current.isDay,
                                   );
                                 } else if (data is WeatherStatusError) {
