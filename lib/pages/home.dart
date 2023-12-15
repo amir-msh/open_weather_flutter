@@ -1,7 +1,9 @@
 import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:open_weather_flutter/components/hourly_weather_list_viewer.dart';
 import 'package:open_weather_flutter/components/location_picker.dart';
 import 'package:open_weather_flutter/components/non_scrollable_child_refresh_indicator.dart';
