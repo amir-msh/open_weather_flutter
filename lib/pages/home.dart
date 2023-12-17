@@ -77,6 +77,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final mainMediaQuery = MediaQuery.of(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: BlocListener<WeatherCubit, WeatherStatus>(
@@ -163,8 +164,11 @@ class _HomePageState extends State<HomePage> {
                                   isScrollControlled: true,
                                   backgroundColor: Colors.transparent,
                                   builder: (BuildContext context) {
-                                    return LocationPicker(
-                                      isDay: weatherData.current.isDay,
+                                    return MediaQuery(
+                                      data: mainMediaQuery,
+                                      child: LocationPicker(
+                                        isDay: weatherData.current.isDay,
+                                      ),
                                     );
                                   },
                                 ).whenComplete(

@@ -42,7 +42,7 @@ class _LocationPickerState extends State<LocationPicker> {
 
   final _searchBoxFocusNode = FocusNode();
   final _pageFocusNode = FocusNode();
-  final double topPadding = 30;
+  static const double topPadding = 20;
 
   Timer searchTimer = Timer(const Duration(seconds: 0), () {});
 
@@ -315,250 +315,258 @@ class _LocationPickerState extends State<LocationPicker> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      primary: true,
-      body: PopScope(
-        onPopInvoked: (didPop) async {
-          searchTimer.cancel();
-          if (didPop) return;
-          Navigator.of(context).pop();
-        },
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-          child: Stack(
-            alignment: Alignment.center,
-            fit: StackFit.expand,
-            clipBehavior: Clip.hardEdge,
-            children: <Widget>[
-              Positioned(
-                left: 20,
-                top: MediaQuery.of(context).padding.top +
-                    20 +
-                    topPadding, // here
-                right: 20,
-                height: 70,
-                child: TextField(
-                  focusNode: _searchBoxFocusNode,
-                  showCursor: true,
-                  autocorrect: true,
-                  autofocus: false,
-                  enableSuggestions: true,
-                  scrollPhysics: const BouncingScrollPhysics(),
-                  inputFormatters: <TextInputFormatter>[
-                    // FilteringTextInputFormatter.deny(
-                    //   RegExp('[`~!@#\$%^&*()\-+_=\'"\.\\\/]'),
-                    // ),
-                    FilteringTextInputFormatter.deny(
-                      RegExp('[`~!@#\$%^&*()-+_=\'".\\/]'),
-                    ),
-                  ],
-                  maxLength: 25,
-                  maxLines: 1,
-                  keyboardType: TextInputType.text,
-                  textAlign: TextAlign.center,
-                  textAlignVertical: TextAlignVertical.bottom,
-                  textInputAction: TextInputAction.done,
-                  style: TextStyle(
-                      fontSize: 20,
-                      color:
-                          Colors.black.withAlpha(200) //Colors.white // (main)
+    return SafeArea(
+      top: true,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        primary: true,
+        body: PopScope(
+          onPopInvoked: (didPop) async {
+            searchTimer.cancel();
+            if (didPop) return;
+            Navigator.of(context).pop();
+          },
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+            child: Stack(
+              alignment: Alignment.center,
+              fit: StackFit.expand,
+              clipBehavior: Clip.hardEdge,
+              children: <Widget>[
+                Positioned(
+                  left: 20,
+                  top: topPadding,
+                  right: 20,
+                  height: 70,
+                  child: TextField(
+                    focusNode: _searchBoxFocusNode,
+                    showCursor: true,
+                    autocorrect: true,
+                    autofocus: false,
+                    enableSuggestions: true,
+                    scrollPhysics: const BouncingScrollPhysics(),
+                    inputFormatters: <TextInputFormatter>[
+                      // FilteringTextInputFormatter.deny(
+                      //   RegExp('[`~!@#\$%^&*()\-+_=\'"\.\\\/]'),
+                      // ),
+                      FilteringTextInputFormatter.deny(
+                        RegExp('[`~!@#\$%^&*()-+_=\'".\\/]'),
                       ),
-                  cursorColor: Colors.black,
-                  cursorWidth: 2,
-                  cursorRadius: const Radius.circular(1),
-                  controller: _searchBoxController,
-                  decoration: InputDecoration(
-                    fillColor: Colors.white.withAlpha(150),
-                    filled: true,
-                    border: const OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(50),
+                    ],
+                    maxLength: 25,
+                    maxLines: 1,
+                    keyboardType: TextInputType.text,
+                    textAlign: TextAlign.center,
+                    textAlignVertical: TextAlignVertical.bottom,
+                    textInputAction: TextInputAction.done,
+                    style: TextStyle(
+                        fontSize: 20,
+                        color:
+                            Colors.black.withAlpha(200) //Colors.white // (main)
+                        ),
+                    cursorColor: Colors.black,
+                    cursorWidth: 2,
+                    cursorRadius: const Radius.circular(1),
+                    controller: _searchBoxController,
+                    decoration: InputDecoration(
+                      fillColor: Colors.white.withAlpha(150),
+                      filled: true,
+                      border: const OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(50),
+                        ),
+                      ),
+
+                      //<test> debug
+
+                      prefixIcon: IconButton(
+                        icon: const Icon(
+                          Icons.my_location,
+                          color: Colors.black,
+                          size: 20,
+                        ),
+                        onPressed: () async {
+                          searchTimer.cancel();
+
+                          BlocProvider.of<WeatherCubit>(context)
+                              .getCurrentLocationWeather();
+                          Navigator.of(context).pop();
+                        },
+                      ),
+
+                      suffixIcon: IconButton(
+                        icon: const Icon(
+                          Icons.clear,
+                          color: Colors.black,
+                          size: 20,
+                        ),
+                        onPressed: () async {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+
+                      // Icons.cancel , Icons.close , Icons.clear , Icons.search ,Icons.edit_location
+
+                      counter: const Text(''),
+                      hintText: 'Search Location',
+                      hintStyle: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.black.withAlpha(150),
                       ),
                     ),
-
-                    //<test> debug
-
-                    prefixIcon: IconButton(
-                      icon: const Icon(
-                        Icons.my_location,
-                        color: Colors.black,
-                        size: 20,
-                      ),
-                      onPressed: () async {
-                        searchTimer.cancel();
-
-                        BlocProvider.of<WeatherCubit>(context)
-                            .getCurrentLocationWeather();
-                        Navigator.of(context).pop();
-                      },
-                    ),
-
-                    suffixIcon: IconButton(
-                      icon: const Icon(
-                        Icons.clear,
-                        color: Colors.black,
-                        size: 20,
-                      ),
-                      onPressed: () async {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-
-                    // Icons.cancel , Icons.close , Icons.clear , Icons.search ,Icons.edit_location
-
-                    counter: const Text(''),
-                    hintText: 'Search Location',
-                    hintStyle: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.black.withAlpha(150),
-                    ),
-                  ),
-                  onChanged: (String text) async {
-                    searchBoxOnChanged();
-                  },
-                ),
-              ),
-              Positioned(
-                left: 0,
-                top: MediaQuery.of(context).padding.top + 75 + topPadding,
-                right: 0,
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-                child: RepaintBoundary(
-                  child: ShaderMask(
-                    blendMode: BlendMode.dstIn,
-                    shaderCallback: (Rect bounds) {
-                      return LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        stops: const [0, 0.025, 0.975, 1],
-                        colors: <Color>[
-                          Colors.black.withAlpha(0),
-                          Colors.black.withAlpha(255),
-                          Colors.black.withAlpha(255),
-                          Colors.black.withAlpha(0)
-                          //Colors.red, Colors.green, Colors.blue
-                        ],
-                      ).createShader(bounds);
+                    onChanged: (String text) async {
+                      searchBoxOnChanged();
                     },
-                    child: ValueListenableBuilder<SuggestedPlaces?>(
-                      valueListenable: _suggestedPlacesNotifier,
-                      builder: (context, value, child) {
-                        late final Widget searchResult;
-
-                        if (value == null) {
-                          searchResult = const Center(
-                            child: CircularProgressIndicator.adaptive(
-                              valueColor: AlwaysStoppedAnimation(Colors.white),
-                            ),
-                          );
-                        } else if (value.isEmpty &&
-                            _searchBoxController.text.isEmpty) {
-                          searchResult = Align(
-                            alignment: Alignment.topCenter,
-                            child: Padding(
-                              padding:
-                                  EdgeInsets.only(top: 20 + topPadding - 10),
-                              child: RawMaterialButton(
-                                onPressed: () async {
-                                  final selectedPosition =
-                                      await Navigator.of(context)
-                                          .push<LatLonAltPosition?>(
-                                    MaterialPageRoute(
-                                      builder: (context) {
-                                        final state =
-                                            BlocProvider.of<WeatherCubit>(
-                                                    context)
-                                                .state;
-
-                                        if (state is WeatherStatusOk) {
-                                          return GlobeLocationPicker(
-                                            initialPosition: (
-                                              state.weatherData.lat.toDouble(),
-                                              state.weatherData.lon.toDouble(),
-                                              null,
-                                            ),
-                                          );
-                                        } else {
-                                          return const GlobeLocationPicker();
-                                        }
-                                      },
-                                    ),
-                                  );
-
-                                  if (selectedPosition != null &&
-                                      context.mounted) {
-                                    FocusScope.of(context)
-                                        .requestFocus(_pageFocusNode);
-
-                                    BlocProvider.of<WeatherCubit>(context)
-                                        .getManualLocationWeather(
-                                      selectedPosition.$1,
-                                      selectedPosition.$2,
-                                    );
-                                    Navigator.of(context).pop();
-                                  }
-                                },
-                                fillColor: Colors.white.withOpacity(0.9),
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 9,
-                                  horizontal: 20,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: const Text('Select location on map'),
-                              ),
-                            ),
-                          );
-                        } else if (value.isEmpty &&
-                            _searchBoxController.text.isNotEmpty) {
-                          searchResult = Center(
-                            child: Text(
-                              'No location was found!',
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.9),
-                                shadows: const <Shadow>[
-                                  Shadow(
-                                    color: Colors.black87,
-                                    blurRadius: 6,
-                                    offset: Offset(0, 1),
-                                  )
-                                ],
-                                fontSize: 18,
-                              ),
-                            ),
-                          );
-                        } else if (value.isNotEmpty) {
-                          searchResult = ListView.separated(
-                            padding: const EdgeInsets.fromLTRB(20, 20, 20, 15),
-                            physics: const BouncingScrollPhysics(),
-                            controller: _placeListController,
-                            separatorBuilder: (
-                              BuildContext context,
-                              int index,
-                            ) {
-                              return const SizedBox(height: 10);
-                            },
-                            itemCount: value.length,
-                            itemBuilder: placeListItemBuilder,
-                          );
-                        } else {
-                          searchResult = const SizedBox();
-                        }
-
-                        return AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 666),
-                          child: searchResult,
-                        );
-                      },
-                    ),
                   ),
                 ),
-              )
-            ],
+                Positioned(
+                  left: 0,
+                  top: topPadding + 60,
+                  right: 0,
+                  bottom: MediaQuery.of(context)
+                      .viewInsets
+                      .bottom, // TODO: check sizing
+                  child: RepaintBoundary(
+                    child: ShaderMask(
+                      blendMode: BlendMode.dstIn,
+                      shaderCallback: (Rect bounds) {
+                        return LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          stops: const [0, 0.025, 0.975, 1],
+                          colors: <Color>[
+                            Colors.black.withAlpha(0),
+                            Colors.black.withAlpha(255),
+                            Colors.black.withAlpha(255),
+                            Colors.black.withAlpha(0)
+                            //Colors.red, Colors.green, Colors.blue
+                          ],
+                        ).createShader(bounds);
+                      },
+                      child: ValueListenableBuilder<SuggestedPlaces?>(
+                        valueListenable: _suggestedPlacesNotifier,
+                        builder: (context, value, child) {
+                          late final Widget searchResult;
+
+                          if (value == null) {
+                            searchResult = const Center(
+                              child: CircularProgressIndicator.adaptive(
+                                valueColor:
+                                    AlwaysStoppedAnimation(Colors.white),
+                              ),
+                            );
+                          } else if (value.isEmpty &&
+                              _searchBoxController.text.isEmpty) {
+                            searchResult = Align(
+                              alignment: Alignment.topCenter,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 10 + topPadding,
+                                ),
+                                child: RawMaterialButton(
+                                  onPressed: () async {
+                                    final selectedPosition =
+                                        await Navigator.of(context)
+                                            .push<LatLonAltPosition?>(
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          final state =
+                                              BlocProvider.of<WeatherCubit>(
+                                                      context)
+                                                  .state;
+
+                                          if (state is WeatherStatusOk) {
+                                            return GlobeLocationPicker(
+                                              initialPosition: (
+                                                state.weatherData.lat
+                                                    .toDouble(),
+                                                state.weatherData.lon
+                                                    .toDouble(),
+                                                null,
+                                              ),
+                                            );
+                                          } else {
+                                            return const GlobeLocationPicker();
+                                          }
+                                        },
+                                      ),
+                                    );
+
+                                    if (selectedPosition != null &&
+                                        context.mounted) {
+                                      FocusScope.of(context)
+                                          .requestFocus(_pageFocusNode);
+
+                                      BlocProvider.of<WeatherCubit>(context)
+                                          .getManualLocationWeather(
+                                        selectedPosition.$1,
+                                        selectedPosition.$2,
+                                      );
+                                      Navigator.of(context).pop();
+                                    }
+                                  },
+                                  fillColor: Colors.white.withOpacity(0.9),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 9,
+                                    horizontal: 20,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Text('Select location on map'),
+                                ),
+                              ),
+                            );
+                          } else if (value.isEmpty &&
+                              _searchBoxController.text.isNotEmpty) {
+                            searchResult = Center(
+                              child: Text(
+                                'No location was found!',
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.9),
+                                  shadows: const <Shadow>[
+                                    Shadow(
+                                      color: Colors.black87,
+                                      blurRadius: 6,
+                                      offset: Offset(0, 1),
+                                    )
+                                  ],
+                                  fontSize: 18,
+                                ),
+                              ),
+                            );
+                          } else if (value.isNotEmpty) {
+                            searchResult = ListView.separated(
+                              padding:
+                                  const EdgeInsets.fromLTRB(20, 20, 20, 15),
+                              physics: const BouncingScrollPhysics(),
+                              controller: _placeListController,
+                              separatorBuilder: (
+                                BuildContext context,
+                                int index,
+                              ) {
+                                return const SizedBox(height: 10);
+                              },
+                              itemCount: value.length,
+                              itemBuilder: placeListItemBuilder,
+                            );
+                          } else {
+                            searchResult = const SizedBox();
+                          }
+
+                          return AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 666),
+                            child: searchResult,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
