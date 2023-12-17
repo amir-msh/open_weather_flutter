@@ -463,7 +463,7 @@ class _LocationPickerState extends State<LocationPicker> {
                               alignment: Alignment.topCenter,
                               child: Padding(
                                 padding: const EdgeInsets.only(
-                                  top: 10 + topPadding,
+                                  top: topPadding,
                                 ),
                                 child: RawMaterialButton(
                                   onPressed: () async {
@@ -508,14 +508,20 @@ class _LocationPickerState extends State<LocationPicker> {
                                     }
                                   },
                                   fillColor: Colors.white.withOpacity(0.9),
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 9,
-                                    horizontal: 20,
-                                  ),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(10, 8, 14, 8),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
-                                  child: const Text('Select location on map'),
+                                  child: const Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.map_outlined),
+                                      SizedBox(width: 6),
+                                      Text('Select location on map'),
+                                    ],
+                                  ),
                                 ),
                               ),
                             );
